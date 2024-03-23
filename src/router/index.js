@@ -7,64 +7,72 @@ const routes = [
     {
         path: '/',
         name: 'Home',
-        component: () => import('../views/Home.vue')
-    },
-    {
-        path: '/permit',
-        name: 'Permit',
-        component: () => import('../views/Permit.vue')
-    },
-    {
-        path: '/database',
-        name: 'Database',
-        children:[
+        component: () => import('../views/Home.vue'),
+        children: [
             {
-                path: '/achievement',
+                path: 'permit',
+                name: 'Permit',
+                component: () => import('../views/Permit.vue')
+            },
+
+
+            {
+                path: '/database/achievement',
                 name: 'Achievement',
-                component: () => import('../views/Achievement.vue')
+                component: () => import('../views/Database/Achievement.vue')
             },
             {
-                path: '/member',
+                path: '/database/member',
                 name: 'Member',
-                component: () => import('../views/Member.vue')
+                component: () => import('../views/Database/Member.vue')
             },
             {
-                path: '/demo',
+                path: '/database/demo',
                 name: 'Demo',
-                component: () => import('../views/Demo.vue')
+                component: () => import('../views/Database/Demo.vue')
             },
             {
-                path: '/activity',
+                path: '/database/activity',
                 name: 'Activity',
-                component: () => import('../views/Activity.vue')
+                component: () => import('../views/Database/Activity.vue')
             },
+            {
+                path: '/log',
+                name:
+                    'Log',
+                component:
+                    () => import('../views/Log.vue')
+            },
+            {
+                path: '/info',
+                name:
+                    'Info',
+                component:
+                    () => import('../views/Info.vue')
+            },
+            {
+                path: '/persona',
+                name:
+                    'Persona',
+                component:
+                    () => import('../views/Persona.vue')
+            }
         ]
     },
     {
-        path: '/log',
-        name: 'Log',
-        component: () => import('../views/Log.vue')
-    },
-    {
-        path: '/info',
-        name: 'Info',
-        component: () => import('../views/Info.vue')
-    },
-    {
-        path: '/persona',
-        name: 'Persona',
-        component: () => import('../views/Persona.vue')
-    },
-    {
         path: '/login',
-        name: 'Login',
-        component: () => import('../views/Login.vue')
+        name:
+            'Login',
+        component:
+            () => import('../views/Login.vue')
     },
     {
         path: '/register',
-        name: 'Register',
-        component: () => import('../views/Register.vue')
-    },
+        name:
+            'Register',
+        component:
+            () => import('../views/Register.vue')
+    }
 ]
 
 const router = new VueRouter({

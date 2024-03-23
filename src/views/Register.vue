@@ -1,23 +1,25 @@
 <template>
   <div>
-    <el-card>
-      <el-form :model="user" :rules="rules" ref="registerRef">
-        <div>欢迎注册后台管理系统</div>
-        <el-form-item prop="username">
-          <el-input placeholder="请输入用户名" v-model="user.username"></el-input>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input show-password placeholder="请输入密码" v-model="user.password"></el-input>
-        </el-form-item>
-        <el-form-item prop="conformPassword">
-          <el-input show-password placeholder="请确认密码" v-model="user.conformPassword"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="register">注册</el-button>
-        </el-form-item>
-        <el-link href="/login">已经有账号?请登录</el-link>
-      </el-form>
-    </el-card>
+    <el-container>
+      <el-header>欢迎注册后台管理系统</el-header>
+      <el-main>
+        <el-form :model="user" :rules="rules" ref="registerRef">
+          <el-form-item prop="username">
+            <el-input placeholder="请输入用户名" v-model="user.username"></el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input show-password placeholder="请输入密码" v-model="user.password"></el-input>
+          </el-form-item>
+          <el-form-item prop="conformPassword">
+            <el-input show-password placeholder="请确认密码" v-model="user.conformPassword"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="register">注册</el-button>
+          </el-form-item>
+          <el-link href="/login">已经有账号?请登录</el-link>
+        </el-form>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
