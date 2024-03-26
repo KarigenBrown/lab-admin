@@ -13,10 +13,10 @@
                 <div slot="title">
                   <span>数据库管理</span>
                 </div>
-                <el-menu-item index="/database/achievement">成果管理</el-menu-item>
-                <el-menu-item index="/database/member">人员管理</el-menu-item>
-                <el-menu-item index="/database/demo">Demo管理</el-menu-item>
-                <el-menu-item index="/database/activity">活动管理</el-menu-item>
+                <el-menu-item index="/achievement">成果管理</el-menu-item>
+                <el-menu-item index="/member">人员管理</el-menu-item>
+                <el-menu-item index="/demo">Demo管理</el-menu-item>
+                <el-menu-item index="/activity">活动管理</el-menu-item>
               </el-submenu>
               <el-menu-item index="/log">日志查询</el-menu-item>
               <el-menu-item index="/info">个人信息管理</el-menu-item>
@@ -31,10 +31,8 @@
         <!--头部区域-->
         <el-header>
           <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+            <el-breadcrumb-item>主页</el-breadcrumb-item>
+            <el-breadcrumb-item>{{ $route.meta.name }}</el-breadcrumb-item>
           </el-breadcrumb>
         </el-header>
         <!--主体区域-->

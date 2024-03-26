@@ -1,14 +1,6 @@
 <template>
   <div>
-    <el-card>
-
-    </el-card>
-    <el-card>
-
-    </el-card>
-    <el-card>
-
-    </el-card>
+    activity
   </div>
 </template>
 <script>

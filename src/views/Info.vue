@@ -10,9 +10,11 @@
           <el-descriptions-item label="学工号">{{ userInfo.number }}</el-descriptions-item>
           <el-descriptions-item label="联系方式">{{ userInfo.contact }}</el-descriptions-item>
           <el-descriptions-item label="身份">{{ userInfo.identity }}</el-descriptions-item>
-          <el-descriptions-item v-if="userInfo.identity === '在校生'" label="年级">{{ userInfo.grade }}
+          <el-descriptions-item v-if="userInfo.identity === '在校生'" label="年级">
+            {{ userInfo.grade }}
           </el-descriptions-item>
-          <el-descriptions-item v-if="userInfo.identity === '毕业生'" label="毕业时间">{{ userInfo.graduationTime }}
+          <el-descriptions-item v-if="userInfo.identity === '毕业生'" label="毕业时间">
+            {{ userInfo.graduationTime }}
           </el-descriptions-item>
           <el-descriptions-item v-if="userInfo.identity === '毕业生'" label="毕业去向">
             {{ userInfo.graduationDestination }}
@@ -35,13 +37,13 @@
           <el-input v-model="form.contact">{{ form.contact }}</el-input>
         </el-form-item>
         <el-form-item label="研究方向" prop="research">
-          <el-input v-model="form.research">{{ form.research }}</el-input>
+          <el-input type="textarea" autosize v-model="form.research">{{ form.research }}</el-input>
         </el-form-item>
         <el-form-item label="成就" prop="achievement">
-          <el-input v-model="form.achievement">{{ form.achievement }}</el-input>
+          <el-input type="textarea" autosize v-model="form.achievement">{{ form.achievement }}</el-input>
         </el-form-item>
         <el-form-item label="简介" prop="introduction">
-          <el-input v-model="form.introduction">{{ form.introduction }}</el-input>
+          <el-input type="textarea" autosize v-model="form.introduction">{{ form.introduction }}</el-input>
         </el-form-item>
       </el-form>
       <el-button @click="formVisible = false">取消</el-button>
@@ -55,6 +57,7 @@ export default {
   data() {
     return {
       userInfo: {
+        id: 1,
         name: '123',
         number: '123',
         photoUrl: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
@@ -81,7 +84,11 @@ export default {
           .then(res => {
             this.userInfo = this.form
             this.formVisible = false
-          })
+          }).catch(e => {
+        this.userInfo = this.form
+        this.formVisible = false
+        this.$message.error('结果未到数据库中修改')
+      })
     }
   }
 }

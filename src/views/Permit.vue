@@ -64,6 +64,36 @@ export default {
           password: '256',
           permits: ['成果管理']
         },
+        {
+          id: 2,
+          username: 'k',
+          password: '256',
+          permits: ['成果管理']
+        },
+        {
+          id: 2,
+          username: 'k',
+          password: '256',
+          permits: ['成果管理']
+        },
+        {
+          id: 2,
+          username: 'k',
+          password: '256',
+          permits: ['成果管理']
+        },
+        {
+          id: 2,
+          username: 'k',
+          password: '256',
+          permits: ['成果管理']
+        },
+        {
+          id: 7,
+          username: 'k',
+          password: '256',
+          permits: ['成果管理']
+        },
       ],
       queryUsername: '',
       form: {},
@@ -83,7 +113,9 @@ export default {
       this.$request.get('/')
           .then(res => {
             this.users = res.data
-          })
+          }).catch(e => {
+        this.$message.info('查询' + this.queryUsername)
+      })
     },
     editUser(index, row) {
       this.$request.put('/', row)
@@ -91,20 +123,30 @@ export default {
             this.form = JSON.parse(JSON.stringify(row))
             this.formVisible = true
             this.formIndex = index
-          })
+          }).catch(e => {
+        this.form = JSON.parse(JSON.stringify(row))
+        this.formVisible = true
+        this.formIndex = index
+      })
     },
     deleteUser(index, id) {
       this.$request.delete('/' + id)
           .then(res => {
             this.users.splice(index, 1)
-          })
+          }).catch(e => {
+        this.$message.error(index + '在数据库中未被删除')
+        this.users.splice(index, 1)
+      })
     },
     updateUser() {
       this.$request.put('/', this.form)
           .then(res => {
             this.formVisible = false
             this.$set(this.users, this.formIndex, this.form)
-          })
+          }).catch(e => {
+        this.formVisible = false
+        this.$set(this.users, this.formIndex, this.form)
+      })
     }
   }
 }

@@ -27,7 +27,9 @@ export default {
     this.$request.get('/log')
         .then(res => {
           this.logs = res.data
-        })
+        }).catch(e=>{
+          this.$message.error('未连接到网络')
+    })
   }
 }
 </script>
