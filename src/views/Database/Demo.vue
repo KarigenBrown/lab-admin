@@ -32,6 +32,11 @@
         <el-form-item label="内容" prop="content">
           <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
         </el-form-item>
+        <el-form-item label="关键字" prop="keywords">
+          <el-tag closable v-for="tag in form.keywords" :key="tag" @close="handleTagClose(tag)">{{ tag }}</el-tag>
+          <el-input v-model="newTag" placeholder="新关键字"></el-input>
+          <el-button @click="addNewTag">增加</el-button>
+        </el-form-item>
       </el-form>
       <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
       <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
@@ -94,12 +99,13 @@ export default {
           videoUrls: 'urls',
           location: '地点',
           content: '内容',
-          keywords: '关键字',
+          keywords: '1,2,3,4',
         },
       ],
       formVisible: false,
       tableIndex: -1,
       form: {},
+      newTag: ''
     };
   },
   methods: {
@@ -152,6 +158,17 @@ export default {
     downloadVideo(file) {
       window.open(file.url)
     },
+    handleTagClose(tag) {
+      this.form.keywords.forEach((value, index, array) => {
+        if (tag === value) {
+          this.$message.info(JSON.stringify(tag))
+          array.splice(index, 1)
+        }
+      })
+    },
+    addNewTag() {
+      this.form.keywords.push(this.newTag)
+    }
   }
 }
 </script>

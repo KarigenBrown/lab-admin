@@ -98,7 +98,6 @@ export default {
       this.formVisible = true
       this.form = activity
       this.tableIndex = index
-      this.form.keywords = this.form.keywords.split(',')
     },
     deleteActivity(index, activity) {
       this.$request.delete('/')
