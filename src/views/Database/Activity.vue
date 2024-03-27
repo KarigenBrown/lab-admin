@@ -113,13 +113,6 @@ export default {
         this.$set(this.activities, this.tableIndex, this.form)
       })
     },
-    handleClose(tag) {
-      this.form.keywords.forEach((value, index, array) => {
-        if (value === tag) {
-          array.splice(index, 1)
-        }
-      })
-    },
   }
 }
 </script>
