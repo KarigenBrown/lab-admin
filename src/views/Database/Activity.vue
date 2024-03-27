@@ -26,11 +26,11 @@
       </el-form>
       <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
       <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
-      <el-upload ref="upload" action="https://jsonplaceholder.typicode.com/posts/" :file-list="fileList"
-                 :on-change="handleAdd" :on-success="handleUploadSuccess" :on-preview="downloadPhoto"
+      <el-upload ref="photo" action="https://jsonplaceholder.typicode.com/posts/" :file-list="photoList"
+                 :on-change="handleAddPhoto" :on-success="handleUploadPhotoSuccess" :on-preview="downloadPhoto"
                  :auto-upload="false" list-type="picture" :headers="{token: user.token}">
-        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+        <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadPhoto">上传到服务器</el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
       <el-button @click="formVisible = false">取消</el-button>
@@ -45,7 +45,16 @@ export default {
   name: 'Activity',
   data() {
     return {
-      fileList: [
+      photoList: [
+        {
+          name: 'food.jpeg',
+          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        }, {
+          name: 'food2.jpeg',
+          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        }
+      ],
+      videoList: [
         {
           name: 'food.jpeg',
           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
@@ -73,13 +82,13 @@ export default {
     };
   },
   methods: {
-    submitUpload() {
-      this.$refs.upload.submit();
+    submitUploadPhoto() {
+      this.$refs.photo.submit();
     },
-    handleUploadSuccess(response, file, fileList) {
-      this.fileList = fileList
+    handleUploadPhotoSuccess(response, file, fileList) {
+      this.photoList = fileList
     },
-    handleAdd(file, fileList) {
+    handleAddPhoto(file, fileList) {
       this.date = moment(this.date).format('YYYY-MM-DD')
       file.name = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
       this.rawName = ''
