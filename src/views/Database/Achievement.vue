@@ -26,12 +26,6 @@
           </el-table>
 
           <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
-            <el-descriptions title="成就详情">
-
-            </el-descriptions>
-          </el-dialog>
-
-          <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
             <el-form :model="form">
               <el-form-item label="用户名" prop="username">
                 <el-input v-model="form.username" placeholder="用户名"></el-input>

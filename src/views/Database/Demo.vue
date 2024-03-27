@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="demos">
+    <el-table :data="activities">
       <el-table-column label="id" prop="id"></el-table-column>
       <el-table-column label="标题" prop="title"></el-table-column>
       <el-table-column label="时间" prop="time"></el-table-column>
@@ -11,19 +11,30 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :visible.sync="formVisible">
-      <el-form>
 
+    <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
+      <el-form :model="form">
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="form.title" placeholder="标题"></el-input>
+        </el-form-item>
+        <el-form-item label="简介" prop="introduction">
+          <el-input v-model="form.introduction" placeholder="简介"></el-input>
+        </el-form-item>
+        <el-form-item label="内容" prop="content">
+          <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
+        </el-form-item>
       </el-form>
       <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
       <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
       <el-upload ref="upload" action="https://jsonplaceholder.typicode.com/posts/" :file-list="fileList"
-                 :on-change="handleAdd" :on-success="handleUploadSuccess"
+                 :on-change="handleAdd" :on-success="handleUploadSuccess" :on-preview="downloadPhoto"
                  :auto-upload="false" list-type="picture" :headers="{token: user.token}">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
+      <el-button @click="formVisible = false">取消</el-button>
+      <el-button @click="updateActivity">确定</el-button>
     </el-dialog>
   </div>
 </template>
@@ -46,20 +57,19 @@ export default {
       user: JSON.parse(localStorage.getItem('user') || '{}'),
       date: '',
       rawName: '',
-      demos: [
+      activities: [
         {
           id: 1,
           title: '标题',
           time: '时间',
-          group: '组',
           introduction: '简介',
           photoUrls: 'urls',
-          location: '地点',
           content: '内容',
-          keywords: '关键字',
         },
       ],
-      formVisible: false
+      formVisible: false,
+      tableIndex: -1,
+      form: {},
     };
   },
   methods: {
@@ -75,10 +85,33 @@ export default {
       this.rawName = ''
       this.date = ''
     },
-    editDemo(index, demo) {
+    editDemo(index, activity) {
       this.formVisible = true
+      this.form = activity
+      this.tableIndex = index
+      this.form.keywords = this.form.keywords.split(',')
     },
-    deleteDemo(index, demo) {
+    deleteDemo(index, activity) {
+      this.$request.delete('/')
+          .then(res => {
+            this.activities.splice(index, 1)
+          }).catch(e => {
+        this.$message.error(index + '在数据库中未被删除')
+        this.activities.splice(index, 1)
+      })
+    },
+    downloadPhoto(file) {
+      window.open(file.url)
+    },
+    updateActivity() {
+      this.$request.put('/', this.form)
+          .then(res => {
+            this.formVisible = false
+            this.$set(this.activities, this.tableIndex, this.form)
+          }).catch(e => {
+        this.formVisible = false
+        this.$set(this.activities, this.tableIndex, this.form)
+      })
     },
   }
 }
