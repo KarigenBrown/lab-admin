@@ -1,41 +1,54 @@
 <template>
   <div>
-    <el-table :data="activities">
-      <el-table-column label="id" prop="id"></el-table-column>
-      <el-table-column label="标题" prop="title"></el-table-column>
-      <el-table-column label="时间" prop="time"></el-table-column>
-      <el-table-column label="操作">
-        <template v-slot="scope">
-          <el-button @click="editActivity(scope.$index, scope.row)">编辑</el-button>
-          <el-button @click="deleteActivity(scope.$index, scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-container>
+      <el-header>
+        <el-input
+            v-model="queryActivityTitle"
+            size="mini"
+            placeholder="查询活动"/>
+        <el-button @click="queryActivity">查询</el-button>
+        <el-button @click="addActivity">新增</el-button>
+      </el-header>
+      <el-main>
+        <el-table :data="activities">
+          <el-table-column label="id" prop="id"></el-table-column>
+          <el-table-column label="标题" prop="title"></el-table-column>
+          <el-table-column label="时间" prop="time"></el-table-column>
+          <el-table-column label="操作">
+            <template v-slot="scope">
+              <el-button @click="editActivity(scope.$index, scope.row)">编辑</el-button>
+              <el-button @click="deleteActivity(scope.$index, scope.row.id)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
 
-    <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
-      <el-form :model="form">
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="form.title" placeholder="标题"></el-input>
-        </el-form-item>
-        <el-form-item label="简介" prop="introduction">
-          <el-input v-model="form.introduction" placeholder="简介"></el-input>
-        </el-form-item>
-        <el-form-item label="内容" prop="content">
-          <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
-        </el-form-item>
-      </el-form>
-      <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
-      <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
-      <el-upload ref="photo" action="https://jsonplaceholder.typicode.com/posts/" :file-list="photoList"
-                 :on-change="handleAddPhoto" :on-success="handleUploadPhotoSuccess" :on-preview="downloadPhoto"
-                 :auto-upload="false" list-type="picture" :headers="{token: user.token}">
-        <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadPhoto">上传到服务器</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-      </el-upload>
-      <el-button @click="formVisible = false">取消</el-button>
-      <el-button @click="updateActivity">确定</el-button>
-    </el-dialog>
+        <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
+          <el-form :model="form">
+            <el-form-item label="标题" prop="title">
+              <el-input v-model="form.title" placeholder="标题"></el-input>
+            </el-form-item>
+            <el-form-item label="简介" prop="introduction">
+              <el-input v-model="form.introduction" placeholder="简介"></el-input>
+            </el-form-item>
+            <el-form-item label="内容" prop="content">
+              <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
+            </el-form-item>
+          </el-form>
+          <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
+          <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
+          <el-upload ref="photo" action="https://jsonplaceholder.typicode.com/posts/" :file-list="photoList"
+                     :on-change="handleAddPhoto" :on-success="handleUploadPhotoSuccess" :on-preview="downloadPhoto"
+                     :auto-upload="false" list-type="picture" :headers="{token: user.token}">
+            <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadPhoto">上传到服务器
+            </el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
+          <el-button @click="formVisible = false">取消</el-button>
+          <el-button @click="updateActivity">确定</el-button>
+        </el-dialog>
+      </el-main>
+    </el-container>
   </div>
 </template>
 <script>
@@ -54,15 +67,6 @@ export default {
           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
         }
       ],
-      videoList: [
-        {
-          name: 'food.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }, {
-          name: 'food2.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ],
       user: JSON.parse(localStorage.getItem('user') || '{}'),
       date: '',
       rawName: '',
@@ -70,7 +74,7 @@ export default {
         {
           id: 1,
           title: '标题',
-          time: '时间',
+          time: '2020-01-01',
           introduction: '简介',
           photoUrls: 'urls',
           content: '内容',
@@ -79,6 +83,7 @@ export default {
       formVisible: false,
       tableIndex: -1,
       form: {},
+      queryActivityTitle: ''
     };
   },
   methods: {
@@ -112,15 +117,36 @@ export default {
       window.open(file.url)
     },
     updateActivity() {
-      this.$request.put('/', this.form)
+      // this.$request.put('/', this.form)
+      //     .then(res => {
+      //       this.formVisible = false
+      //       this.$set(this.activities, this.tableIndex, this.form)
+      //     }).catch(e => {
+      //   this.formVisible = false
+      //   this.$set(this.activities, this.tableIndex, this.form)
+      // })
+      this.formVisible = false
+      this.form.time = moment(this.form.time).format('YYYY-MM-DD')
+      if (this.tableIndex === -1) {
+        this.activities.push(this.form)
+        this.$set(this.activities, this.users.length - 1, this.form)
+      } else {
+        this.$set(this.activities, this.formIndex, this.form)
+      }
+    },
+    queryActivity() {
+      this.$request.get('/')
           .then(res => {
-            this.formVisible = false
-            this.$set(this.activities, this.tableIndex, this.form)
+            this.activities = res.data
           }).catch(e => {
-        this.formVisible = false
-        this.$set(this.activities, this.tableIndex, this.form)
+        this.$message.info('查询' + this.queryActivityTitle)
       })
     },
+    addActivity() {
+      this.tableIndex = -1
+      this.form = {}
+      this.formVisible = true
+    }
   }
 }
 </script>
