@@ -51,37 +51,47 @@ export default {
   data() {
     return {
       userInfo: {
-        id: 1,
-        name: '123',
-        number: '123',
-        photoUrl: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-        identity: '在校生',
-        grade: '123',
-        graduationTime: '',
-        graduationDestination: '',
-        contact: '联系方式',
-        research: '研究方向',
-        achievement: '成就',
-        introduction: '简介',
+        // id: 1,
+        // name: '123',
+        // number: '123',
+        // photoUrl: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+        // identity: '在校生',
+        // grade: '123',
+        // graduationTime: '',
+        // graduationDestination: '',
+        // contact: '联系方式',
+        // research: '研究方向',
+        // achievement: '成就',
+        // introduction: '简介',
       },
-      hiddenFields: ['contact', 'achievement'],
       userInfoHidden: {}
     }
   },
   created() {
-    this.userInfoHidden = JSON.parse(JSON.stringify(this.userInfo))
-    Object.keys(this.userInfoHidden).forEach(key => this.userInfoHidden[key] = false)
-    this.hiddenFields.forEach(field => this.userInfoHidden[field] = true)
+    sessionStorage.setItem('userNumber', '123')
+
+    let userNumber = sessionStorage.getItem('userNumber')
+    this.$request.get('/webMember/' + userNumber)
+        .then(res => {
+          this.userInfo = res.data
+          this.userInfo.hiddenFields = this.userInfo.hiddenFields.split(',')
+          this.userInfoHidden = JSON.parse(JSON.stringify(this.userInfo))
+          Object.keys(this.userInfoHidden).forEach(key => this.userInfoHidden[key] = false)
+          this.userInfo.hiddenFields.forEach(field => this.userInfoHidden[field] = true)
+        }).catch(err => {
+      this.$message.error(err)
+    })
   },
   methods: {
     updateHiddenFields() {
-      this.hiddenFields = []
+      let hiddenFields = []
       Object.keys(this.userInfoHidden).forEach(key => {
         if (this.userInfoHidden[key]) {
-          this.hiddenFields.push(key)
+          hiddenFields.push(key)
         }
       })
-      this.$request.put('/', this.hiddenFields)
+      this.userInfo.hiddenFields = hiddenFields.join(',')
+      this.$request.put('/webMember', this.userInfo)
           .then(res => {
             this.$message.success('修改成功')
           }).catch(e => {

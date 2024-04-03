@@ -29,9 +29,19 @@
 
     <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
       <el-form :model="form">
-        <el-upload :show-file-list="false">
-          <el-image v-if="form.photoUrl" :src="form.photoUrl"/>
-          <i v-else class="el-icon-plus"></i>
+        <el-upload
+            ref="photo"
+            action="http://localhost:8081/webMember/photo"
+            :show-file-list="true"
+            list-type="picture"
+            :limit="1"
+            :multiple="false"
+            name="photo"
+            :headers="{number: form.number}"
+            :auto-upload="false"
+            :file-list="fileList"
+            accept="jpg">
+          <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
         <el-form-item label="联系方式" prop="contact">
           <el-input v-model="form.contact">{{ form.contact }}</el-input>
@@ -56,23 +66,23 @@ export default {
   name: 'Info',
   data() {
     return {
-      userInfo: {
-        id: 1,
-        name: '123',
-        number: '123',
-        photoUrl: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-        identity: '在校生',
-        grade: '123',
-        graduationTime: '',
-        graduationDestination: '',
-        contact: '联系方式',
-        research: '研究方向',
-        achievement: '成就',
-        introduction: '简介',
-      },
+      userInfo: {},
       formVisible: false,
-      form: {}
+      form: {},
+      fileList: []
     }
+  },
+  created() {
+    sessionStorage.setItem('userNumber', '123')
+
+    let userNumber = sessionStorage.getItem('userNumber')
+    this.$request.get('/webMember/' + userNumber)
+        .then(res => {
+          this.userInfo = res.data
+          this.fileList.push({url: this.userInfo.photoUrl})
+        }).catch(err => {
+      this.$message.error(err)
+    })
   },
   methods: {
     editUser() {
@@ -80,16 +90,17 @@ export default {
       this.formVisible = true
     },
     updateUserInfo() {
-      this.$request.put('/', this.userInfo)
+      this.$refs.photo.submit()
+      this.form.photoUrl = `http://localhost:9000/web/memberPhoto/${this.form.number}.jpg`
+      this.$request.put('/webMember', this.form)
           .then(res => {
             this.userInfo = this.form
             this.formVisible = false
+            location.reload()
           }).catch(e => {
-        this.userInfo = this.form
-        this.formVisible = false
-        this.$message.error('结果未到数据库中修改')
+        this.$message.error('错误')
       })
-    }
+    },
   }
 }
 </script>
