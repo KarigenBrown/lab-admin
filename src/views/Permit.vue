@@ -2,8 +2,8 @@
   <div>
     <el-table :data="users">
       <el-table-column label="id" prop="id"></el-table-column>
+      <el-table-column label="学工号" prop="number"></el-table-column>
       <el-table-column label="用户名" prop="username"></el-table-column>
-      <el-table-column label="密码" prop="password"></el-table-column>
       <el-table-column label="权限" prop="permits">
         <template v-slot="scope">
           <el-tag v-for="permit in users[scope.$index].permits" :key="permit">{{ permit }}</el-tag>
@@ -32,7 +32,7 @@
           <el-input v-model="form.username" placeholder="用户名"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="form.password" placeholder="密码"></el-input>
+          <el-checkbox v-model="form.password" :true-label="form.username">原始密码</el-checkbox>
         </el-form-item>
         <el-form-item label="权限" prop="permits">
           <el-checkbox-group v-model="form.permits">
@@ -51,50 +51,7 @@ export default {
   name: 'Permit',
   data() {
     return {
-      users: [
-        {
-          id: 1,
-          username: 'karigen',
-          password: '123',
-          permits: ['人员管理', "成果管理"]
-        },
-        {
-          id: 2,
-          username: 'k',
-          password: '256',
-          permits: ['成果管理']
-        },
-        {
-          id: 2,
-          username: 'k',
-          password: '256',
-          permits: ['成果管理']
-        },
-        {
-          id: 2,
-          username: 'k',
-          password: '256',
-          permits: ['成果管理']
-        },
-        {
-          id: 2,
-          username: 'k',
-          password: '256',
-          permits: ['成果管理']
-        },
-        {
-          id: 2,
-          username: 'k',
-          password: '256',
-          permits: ['成果管理']
-        },
-        {
-          id: 7,
-          username: 'k',
-          password: '256',
-          permits: ['成果管理']
-        },
-      ],
+      users: [],
       queryUsername: '',
       form: {},
       formVisible: false,
@@ -103,49 +60,50 @@ export default {
     }
   },
   created() {
-    this.$request.get('/', this.queryUsername)
+    this.$request.get('/webManager/all')
         .then(res => {
           this.users = res.data
-        })
+          this.users.forEach(user => {
+            user.permits = user.permits.split(',')
+          })
+        }).catch(err => {
+      this.$message.error('错误')
+    })
   },
   methods: {
-    query() {
-      this.$request.get('/')
-          .then(res => {
-            this.users = res.data
-          }).catch(e => {
-        this.$message.info('查询' + this.queryUsername)
-      })
-    },
-    editUser(index, row) {
-      this.$request.put('/', row)
-          .then(res => {
-            this.form = JSON.parse(JSON.stringify(row))
-            this.formVisible = true
-            this.formIndex = index
-          }).catch(e => {
-        this.form = JSON.parse(JSON.stringify(row))
-        this.formVisible = true
-        this.formIndex = index
-      })
-    },
     deleteUser(index, id) {
-      this.$request.delete('/' + id)
+      this.$request.delete('/webManager/' + id)
           .then(res => {
             this.users.splice(index, 1)
           }).catch(e => {
-        this.$message.error(index + '在数据库中未被删除')
-        this.users.splice(index, 1)
+        this.$message.error('错误')
       })
     },
+    query() {
+      this.$request.get('/webManager/' + this.queryUsername)
+          .then(res => {
+            this.users = res.data
+            this.users.forEach(user => {
+              user.permits = user.permits.split(',')
+            })
+          }).catch(e => {
+        this.$message.error('错误')
+      })
+    },
+    editUser(index, row) {
+      this.form = JSON.parse(JSON.stringify(row))
+      this.formVisible = true
+      this.formIndex = index
+    },
     updateUser() {
-      this.$request.put('/', this.form)
+      this.form.permits = this.form.permits.join(',')
+      this.$request.put('/webManager', this.form)
           .then(res => {
             this.formVisible = false
+            this.form.permits = this.form.permits.split(',')
             this.$set(this.users, this.formIndex, this.form)
           }).catch(e => {
-        this.formVisible = false
-        this.$set(this.users, this.formIndex, this.form)
+        this.$message.error('错误')
       })
     }
   }
