@@ -2,7 +2,7 @@
   <div>
     <el-row>
       <el-col :span="8">
-        <el-image :src="userInfo.photoUrl"></el-image>
+        <el-avatar :src="userInfo.photoUrl" shape="square" :size="250" :key="userInfo.photoUrl"></el-avatar>
       </el-col>
       <el-col :span="16">
         <el-descriptions title="用户信息" v-model="userInfo">
@@ -32,15 +32,15 @@
         <el-upload
             ref="photo"
             action="http://localhost:8081/webMember/photo"
-            :show-file-list="true"
             list-type="picture"
             :limit="1"
             :multiple="false"
-            name="photo"
-            :headers="{number: form.number}"
             :auto-upload="false"
-            :file-list="fileList"
-            accept="jpg">
+            :file-list="photoList"
+            name="photo"
+            :before-upload="beforeUpload"
+            :on-success="uploadSuccess"
+            :data="this.headers">
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
         <el-form-item label="联系方式" prop="contact">
@@ -69,7 +69,8 @@ export default {
       userInfo: {},
       formVisible: false,
       form: {},
-      fileList: []
+      headers: {},
+      photoList: []
     }
   },
   created() {
@@ -79,7 +80,7 @@ export default {
     this.$request.get('/webMember/' + userNumber)
         .then(res => {
           this.userInfo = res.data
-          this.fileList.push({url: this.userInfo.photoUrl})
+          this.photoList.push({url: this.userInfo.photoUrl})
         }).catch(err => {
       this.$message.error(err)
     })
@@ -89,17 +90,24 @@ export default {
       this.form = JSON.parse(JSON.stringify(this.userInfo))
       this.formVisible = true
     },
-    updateUserInfo() {
-      this.$refs.photo.submit()
-      this.form.photoUrl = `http://localhost:9000/web/memberPhoto/${this.form.number}.jpg`
+    beforeUpload(file) {
+      const extendFileName = file.name.substring(file.name.lastIndexOf('.'))
+      this.headers.photoName = this.form.number + extendFileName
+    },
+    uploadSuccess(response, file, fileList) {
+      this.form.photoUrl = response.data.photoUrl
       this.$request.put('/webMember', this.form)
           .then(res => {
             this.userInfo = this.form
             this.formVisible = false
-            location.reload()
-          }).catch(e => {
-        this.$message.error('错误')
+            this.userInfo.photoUrl += '?_=' + new Date().getTime()
+            this.$message.success('修改成功')
+          }).catch(err => {
+        this.$message.error(err)
       })
+    },
+    updateUserInfo() {
+      this.$refs.photo.submit()
     },
   }
 }

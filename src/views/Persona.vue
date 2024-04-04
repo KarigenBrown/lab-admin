@@ -50,20 +50,7 @@ export default {
   name: 'Persona',
   data() {
     return {
-      userInfo: {
-        // id: 1,
-        // name: '123',
-        // number: '123',
-        // photoUrl: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-        // identity: '在校生',
-        // grade: '123',
-        // graduationTime: '',
-        // graduationDestination: '',
-        // contact: '联系方式',
-        // research: '研究方向',
-        // achievement: '成就',
-        // introduction: '简介',
-      },
+      userInfo: {},
       userInfoHidden: {}
     }
   },
@@ -92,11 +79,11 @@ export default {
       })
       this.userInfo.hiddenFields = hiddenFields.join(',')
       this.$request.put('/webMember', this.userInfo)
-          .then(res => {
+          .then(res=>{
             this.$message.success('修改成功')
-          }).catch(e => {
-        this.$message.error('修改失败')
-      })
+          }).catch(err => {
+            this.$message.error(err)
+          })
     }
   }
 }

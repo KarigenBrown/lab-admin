@@ -67,7 +67,7 @@ export default {
             user.permits = user.permits.split(',')
           })
         }).catch(err => {
-      this.$message.error('错误')
+      this.$message.error(err)
     })
   },
   methods: {
@@ -75,8 +75,9 @@ export default {
       this.$request.delete('/webManager/' + id)
           .then(res => {
             this.users.splice(index, 1)
-          }).catch(e => {
-        this.$message.error('错误')
+            this.$message.success('修改成功')
+          }).catch(err => {
+        this.$message.error(err)
       })
     },
     query() {
@@ -86,8 +87,8 @@ export default {
             this.users.forEach(user => {
               user.permits = user.permits.split(',')
             })
-          }).catch(e => {
-        this.$message.error('错误')
+          }).catch(err => {
+        this.$message.error(err)
       })
     },
     editUser(index, row) {
@@ -102,8 +103,9 @@ export default {
             this.formVisible = false
             this.form.permits = this.form.permits.split(',')
             this.$set(this.users, this.formIndex, this.form)
-          }).catch(e => {
-        this.$message.error('错误')
+            this.$message.success('修改成功')
+          }).catch(err => {
+        this.$message.error(err)
       })
     }
   }

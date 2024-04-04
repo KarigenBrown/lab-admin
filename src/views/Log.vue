@@ -21,7 +21,7 @@ export default {
         .then(res => {
           this.logs = res.data
         }).catch(err => {
-      this.$message.error('错误')
+      this.$message.error(err)
     })
   }
 }
