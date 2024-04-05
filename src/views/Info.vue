@@ -40,8 +40,8 @@
             name="photo"
             :before-upload="beforeUpload"
             :on-success="uploadSuccess"
-            :data="this.headers">
-          <el-button size="small" type="primary">点击上传</el-button>
+            :data="this.names">
+          <el-button slot="trigger" size="small" type="primary">点击上传</el-button>
         </el-upload>
         <el-form-item label="联系方式" prop="contact">
           <el-input v-model="form.contact">{{ form.contact }}</el-input>
@@ -69,7 +69,7 @@ export default {
       userInfo: {},
       formVisible: false,
       form: {},
-      headers: {},
+      names: {},
       photoList: []
     }
   },
@@ -80,7 +80,9 @@ export default {
     this.$request.get('/webMember/' + userNumber)
         .then(res => {
           this.userInfo = res.data
-          this.photoList.push({url: this.userInfo.photoUrl})
+          const photoUrl = this.userInfo.photoUrl
+          const fileName = photoUrl.substring(photoUrl.lastIndexOf('/'))
+          this.photoList.push({url: photoUrl, name: fileName})
         }).catch(err => {
       this.$message.error(err)
     })
@@ -92,14 +94,14 @@ export default {
     },
     beforeUpload(file) {
       const extendFileName = file.name.substring(file.name.lastIndexOf('.'))
-      this.headers.photoName = this.form.number + extendFileName
+      this.names.photoName = this.form.number + extendFileName
     },
     uploadSuccess(response, file, fileList) {
+      this.formVisible = false
       this.form.photoUrl = response.data.photoUrl
       this.$request.put('/webMember', this.form)
           .then(res => {
             this.userInfo = this.form
-            this.formVisible = false
             this.userInfo.photoUrl += '?_=' + new Date().getTime()
             this.$message.success('修改成功')
           }).catch(err => {

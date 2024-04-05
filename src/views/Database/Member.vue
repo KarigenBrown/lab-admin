@@ -119,7 +119,6 @@ export default {
         this.$message.error(err)
       })
     },
-    //---------------------------
     addUser() {
       this.formIndex = -1
       this.form = {}

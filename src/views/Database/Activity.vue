@@ -13,11 +13,11 @@
         <el-table :data="activities">
           <el-table-column label="id" prop="id"></el-table-column>
           <el-table-column label="标题" prop="title"></el-table-column>
-          <el-table-column label="时间" prop="time"></el-table-column>
+          <el-table-column label="时间" prop="date"></el-table-column>
           <el-table-column label="操作">
             <template v-slot="scope">
               <el-button @click="editActivity(scope.$index, scope.row)">编辑</el-button>
-              <el-button @click="deleteActivity(scope.$index, scope.row.id)">删除</el-button>
+              <el-button @click="deleteActivity(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -26,6 +26,9 @@
           <el-form :model="form">
             <el-form-item label="标题" prop="title">
               <el-input v-model="form.title" placeholder="标题"></el-input>
+            </el-form-item>
+            <el-form-item label="时间" prop="date">
+              <el-date-picker v-model="form.date" type="date" placeholder="选择日期"></el-date-picker>
             </el-form-item>
             <el-form-item label="简介" prop="introduction">
               <el-input v-model="form.introduction" placeholder="简介"></el-input>
@@ -36,12 +39,20 @@
           </el-form>
           <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
           <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
-          <el-upload ref="photo" action="https://jsonplaceholder.typicode.com/posts/" :file-list="photoList"
-                     :on-change="handleAddPhoto" :on-success="handleUploadPhotoSuccess" :on-preview="downloadPhoto"
-                     :auto-upload="false" list-type="picture" :headers="{token: user.token}">
+          <el-upload ref="photos"
+                     :action="postPhotoUrl"
+                     list-type="picture"
+                     :multiple="false"
+                     :auto-upload="false"
+                     :file-list="photoList"
+                     name="photos"
+                     :on-change="handleChangePhoto"
+                     :before-remove="handleRemovePhoto"
+                     :on-success="handleUploadPhotoSuccess"
+                     :on-preview="downloadPhoto"
+                     :data="{'photoName': JSON.stringify(this.photoName)}">
             <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadPhoto">上传到服务器
-            </el-button>
+            <el-button @click="submitUpload">上传到服务器</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
           <el-button @click="formVisible = false">取消</el-button>
@@ -58,95 +69,124 @@ export default {
   name: 'Activity',
   data() {
     return {
-      photoList: [
-        {
-          name: 'food.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }, {
-          name: 'food2.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ],
+      photoList: [],
       user: JSON.parse(localStorage.getItem('user') || '{}'),
       date: '',
       rawName: '',
-      activities: [
-        {
-          id: 1,
-          title: '标题',
-          time: '2020-01-01',
-          introduction: '简介',
-          photoUrls: 'urls',
-          content: '内容',
-        },
-      ],
+      activities: [],
       formVisible: false,
       tableIndex: -1,
       form: {},
-      queryActivityTitle: ''
+      queryActivityTitle: '',
+      photoName: {},
+      postPhotoUrl: '',
     };
   },
+  created() {
+    this.$request.get('/webActivity/all')
+        .then(res => {
+          res.data.forEach(activity => {
+            activity.date = activity.date.substring(0, 10)
+          })
+          this.activities = res.data
+        }).catch(err => {
+      this.$message.error(err)
+    })
+  },
   methods: {
-    submitUploadPhoto() {
-      this.$refs.photo.submit();
-    },
-    handleUploadPhotoSuccess(response, file, fileList) {
-      this.photoList = fileList
-    },
-    handleAddPhoto(file, fileList) {
-      this.date = moment(this.date).format('YYYY-MM-DD')
-      file.name = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
-      this.rawName = ''
-      this.date = ''
-    },
-    editActivity(index, activity) {
-      this.formVisible = true
-      this.form = activity
-      this.tableIndex = index
+    queryActivity() {
+      this.$request.get('/webActivity/' + this.queryActivityTitle)
+          .then(res => {
+            this.activities = res.data
+          }).catch(err => {
+        this.$message.error(err)
+      })
     },
     deleteActivity(index, activity) {
-      this.$request.delete('/')
+      this.$request.delete('/webActivity/' + activity.id)
           .then(res => {
             this.activities.splice(index, 1)
-          }).catch(e => {
-        this.$message.error(index + '在数据库中未被删除')
-        this.activities.splice(index, 1)
+          }).catch(err => {
+        this.$message.error(err)
       })
     },
     downloadPhoto(file) {
       window.open(file.url)
     },
-    updateActivity() {
-      // this.$request.put('/', this.form)
-      //     .then(res => {
-      //       this.formVisible = false
-      //       this.$set(this.activities, this.tableIndex, this.form)
-      //     }).catch(e => {
-      //   this.formVisible = false
-      //   this.$set(this.activities, this.tableIndex, this.form)
-      // })
-      this.formVisible = false
-      this.form.time = moment(this.form.time).format('YYYY-MM-DD')
-      if (this.tableIndex === -1) {
-        this.activities.push(this.form)
-        this.$set(this.activities, this.users.length - 1, this.form)
-      } else {
-        this.$set(this.activities, this.formIndex, this.form)
-      }
-    },
-    queryActivity() {
-      this.$request.get('/')
-          .then(res => {
-            this.activities = res.data
-          }).catch(e => {
-        this.$message.info('查询' + this.queryActivityTitle)
-      })
-    },
     addActivity() {
       this.tableIndex = -1
       this.form = {}
       this.formVisible = true
-    }
+    },
+    submitUpload() {
+      this.postPhotoUrl = `http://localhost:8081/webActivity/${this.form.title}/photo`
+      this.$refs.photos.submit()
+    },
+    editActivity(index, activity) {
+      this.form = JSON.parse(JSON.stringify(activity))
+      this.tableIndex = index
+      if (this.form.urls === '') {
+        this.form.urls = []
+      } else {
+        this.form.urls = this.form.urls.split('\n')
+        this.photoList = this.form.urls.map(photoUrl => {
+          const fileName = photoUrl.substring(photoUrl.lastIndexOf('/') + 1)
+          return {url: photoUrl, name: fileName}
+        })
+      }
+      this.photoName = {}
+      this.formVisible = true
+    },
+    handleChangePhoto(file, fileList) {
+      if (file.status === 'ready') { // 添加文件
+        this.date = moment(this.date).format('YYYY-MM-DD')
+        this.photoName[file.name] = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
+
+        this.rawName = ''
+        this.date = ''
+      }
+    },
+    handleRemovePhoto(file, fileList) {
+      if (file.status === 'ready') {
+        Object.keys(this.photoName).forEach(fileName => {
+          if (fileName === file.name) {
+            this.photoName[fileName] = undefined
+          }
+        })
+      } else if (file.status === 'success') {
+        const index = this.form.urls.indexOf(file.url)
+        this.form.urls.splice(index, 1)
+      }
+    },
+    updateActivity() {
+      this.formVisible = false
+      this.form.date = moment(this.form.date).format('YYYY-MM-DD')
+      this.form.date += ' 00:00:00'
+      if (this.tableIndex === -1) { // 增加
+        this.$request.post('/webActivity', this.form)
+            .then(res => {
+              this.form.id = res.data.id
+              this.activities.push(this.form)
+              this.$set(this.activities, this.users.length - 1, this.form)
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      } else { // 修改
+        this.form.urls = this.form.urls.join('\n')
+        this.$request.put('/webActivity', this.form)
+            .then(res => {
+              this.$set(this.activities, this.tableIndex, this.form)
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      }
+      this.form.date = this.form.date.substring(0, 10)
+    },
+    handleUploadPhotoSuccess(response, file, fileList) {
+      if (this.tableIndex !== -1) { // 修改
+        this.form.urls = this.form.urls.concat(response.data.urls.split('\n'))
+      }
+    },
   }
 }
 </script>
