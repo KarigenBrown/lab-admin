@@ -1,80 +1,87 @@
 <template>
   <div>
-    <el-table :data="demos">
-      <el-table-column label="id" prop="id"></el-table-column>
-      <el-table-column label="标题" prop="title"></el-table-column>
-      <el-table-column label="时间" prop="time"></el-table-column>
-      <el-table-column label="操作">
-        <template v-slot="scope">
-          <el-button @click="editDemo(scope.$index, scope.row)">编辑</el-button>
-          <el-button @click="deleteDemo(scope.$index, scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-container>
+      <el-header>
+        <el-button @click="addDemo">新增</el-button>
+      </el-header>
+      <el-main>
+        <el-table :data="demos">
+          <el-table-column label="id" prop="id"></el-table-column>
+          <el-table-column label="标题" prop="title"></el-table-column>
+          <el-table-column label="时间" prop="time"></el-table-column>
+          <el-table-column label="操作">
+            <template v-slot="scope">
+              <el-button @click="editDemo(scope.$index, scope.row)">编辑</el-button>
+              <el-button @click="deleteDemo(scope.$index, scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
 
-    <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
-      <el-form :model="form">
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="form.title" placeholder="标题"></el-input>
-        </el-form-item>
-        <el-form-item label="时间" prop="time">
-          <el-date-picker v-model="form.time" type="date" placeholder="选择日期"></el-date-picker>
-        </el-form-item>
-        <el-form-item label="组" prop="group">
-          <el-input v-model="form.group" placeholder="组"></el-input>
-        </el-form-item>
-        <el-form-item label="简介" prop="introduction">
-          <el-input v-model="form.introduction" placeholder="简介"></el-input>
-        </el-form-item>
-        <el-form-item label="地点" prop="location">
-          <el-input v-model="form.location" placeholder="地点"></el-input>
-        </el-form-item>
-        <el-form-item label="内容" prop="content">
-          <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
-        </el-form-item>
-        <el-form-item label="关键字" prop="keywords">
-          <el-tag closable v-for="tag in form.keywords" :key="tag" @close="handleTagClose(tag)">{{ tag }}</el-tag>
-          <el-input v-model="newTag" placeholder="新关键字"></el-input>
-          <el-button @click="addNewTag">增加</el-button>
-        </el-form-item>
-      </el-form>
-      <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
-      <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
-      <el-upload
-          ref="photos"
-          :action="this.postPhotoUrl"
-          list-type="picture"
-          :multiple="false"
-          :auto-upload="false"
-          :file-list="photoList"
-          name="photos"
-          :on-change="handleChangePhoto"
-          :before-remove="handleRemovePhoto"
-          :on-success="handleUploadPhotoSuccess"
-          :on-preview="downloadPhoto"
-          :data="{'photoName': JSON.stringify(this.photoName)}">
-        <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-        <el-button size="small" type="success" @click="submitUploadPhoto">上传到服务器
-        </el-button>
-        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-      </el-upload>
-      <el-upload
-          ref="videos"
-          :action="this.postVideoUrl"
-          :multiple="false"
-          :auto-upload="false"
-          :file-list="videoList"
-          name="videos"
-          :before-remove="handleRemoveVideo"
-          :on-success="handleUploadVideoSuccess"
-          :on-preview="downloadVideo">
-        <el-button slot="trigger" size="small" type="primary">选取视频</el-button>
-        <el-button size="small" type="success" @click="submitUploadVideo">上传到服务器
-        </el-button>
-      </el-upload>
-      <el-button @click="formVisible = false">取消</el-button>
-      <el-button @click="updateDemo">确定</el-button>
-    </el-dialog>
+        <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
+          <el-form :model="form">
+            <el-form-item label="标题" prop="title">
+              <el-input v-model="form.title" placeholder="标题"></el-input>
+            </el-form-item>
+            <el-form-item label="时间" prop="time">
+              <el-date-picker v-model="form.time" type="date" placeholder="选择日期"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="组" prop="group">
+              <el-input v-model="form.group" placeholder="组"></el-input>
+            </el-form-item>
+            <el-form-item label="简介" prop="introduction">
+              <el-input v-model="form.introduction" placeholder="简介"></el-input>
+            </el-form-item>
+            <el-form-item label="地点" prop="location">
+              <el-input v-model="form.location" placeholder="地点"></el-input>
+            </el-form-item>
+            <el-form-item label="内容" prop="content">
+              <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
+            </el-form-item>
+            <el-form-item label="关键字" prop="keywords">
+              <el-tag closable v-for="tag in form.keywords" :key="tag" @close="handleTagClose(tag)">{{ tag }}</el-tag>
+              <el-input v-model="newTag" placeholder="新关键字"></el-input>
+              <el-button @click="addNewTag">增加</el-button>
+            </el-form-item>
+          </el-form>
+          <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
+          <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
+          <el-upload
+              ref="photos"
+              :action="this.postPhotoUrl"
+              list-type="picture"
+              :multiple="false"
+              :auto-upload="false"
+              :file-list="photoList"
+              name="photos"
+              :on-change="handleChangePhoto"
+              :before-remove="handleRemovePhoto"
+              :on-success="handleUploadPhotoSuccess"
+              :on-preview="downloadPhoto"
+              :data="{'photoName': JSON.stringify(this.photoName)}">
+            <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+            <el-button size="small" type="success" @click="submitUploadPhoto">上传到服务器
+            </el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
+          <el-upload
+              ref="videos"
+              :action="this.postVideoUrl"
+              :multiple="false"
+              :auto-upload="false"
+              :file-list="videoList"
+              name="videos"
+              :before-remove="handleRemoveVideo"
+              :on-success="handleUploadVideoSuccess"
+              :on-preview="downloadVideo">
+            <el-button slot="trigger" size="small" type="primary">选取视频</el-button>
+            <el-button size="small" type="success" @click="submitUploadVideo">上传到服务器
+            </el-button>
+          </el-upload>
+          <el-button @click="formVisible = false">取消</el-button>
+          <el-button @click="updateDemo">确定</el-button>
+        </el-dialog>
+      </el-main>
+    </el-container>
   </div>
 </template>
 <script>
@@ -119,7 +126,6 @@ export default {
         this.$message.error(err)
       })
     },
-    // ------------------------------------------
     editDemo(index, demo) {
       this.form = JSON.parse(JSON.stringify(demo))
       this.tableIndex = index
@@ -141,7 +147,7 @@ export default {
         this.form.videoUrls = []
       } else {
         this.form.videoUrls = this.form.videoUrls.split('\n')
-        this.photoList = this.form.videoUrls.map(videoUrl => {
+        this.videoList = this.form.videoUrls.map(videoUrl => {
           const fileName = videoUrl.substring(videoUrl.lastIndexOf('/') + 1)
           return {url: videoUrl, name: fileName}
         })
@@ -160,7 +166,9 @@ export default {
       this.$refs.videos.submit();
     },
     addNewTag() {
+      // this.$message.info(JSON.stringify(this.form.keywords))
       this.form.keywords.push(this.newTag)
+      this.newTag = ''
     },
     handleTagClose(tag) {
       this.form.keywords.forEach((value, index, array) => {
@@ -213,8 +221,8 @@ export default {
           }
         })
       } else if (file.status === 'success') {
-        const index = this.form.urls.indexOf(file.url)
-        this.form.urls.splice(index, 1)
+        const index = this.form.photoUrls.indexOf(file.url)
+        this.form.photoUrls.splice(index, 1)
       }
     },
     handleRemoveVideo(file, fileList) {
@@ -248,6 +256,16 @@ export default {
         })
       }
       this.form.time = this.form.time.substring(0, 10)
+    },
+    addDemo() {
+      this.tableIndex = -1
+      this.form = {}
+      this.form.photoUrls = []
+      this.form.videoUrls = []
+      this.form.keywords = []
+      this.photoList = []
+      this.videoList = []
+      this.formVisible = true
     },
   }
 }
