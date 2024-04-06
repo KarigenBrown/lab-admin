@@ -111,15 +111,19 @@ export default {
       })
     },
     downloadPhoto(file) {
-      window.open(file.url)
+      let url = `http://localhost:8081/webActivity/${this.form.title}/photo/download/${file.name}`
+      url = encodeURI(encodeURI(url))
+      window.open(url)
     },
     addActivity() {
       this.tableIndex = -1
       this.form = {}
+      this.form.urls = []
       this.formVisible = true
     },
     submitUpload() {
-      this.postPhotoUrl = `http://localhost:8081/webActivity/${this.form.title}/photo`
+      this.postPhotoUrl = `http://localhost:8081/webActivity/${this.form.title}/photo/upload`
+      this.postPhotoUrl = encodeURI(encodeURI(this.postPhotoUrl))
       this.$refs.photos.submit()
     },
     editActivity(index, activity) {
@@ -140,7 +144,9 @@ export default {
     handleChangePhoto(file, fileList) {
       if (file.status === 'ready') { // 添加文件
         this.date = moment(this.date).format('YYYY-MM-DD')
-        this.photoName[file.name] = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
+        const newName = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
+        this.photoName[file.name] = newName
+        file.name = newName
 
         this.rawName = ''
         this.date = ''
@@ -156,6 +162,11 @@ export default {
       } else if (file.status === 'success') {
         const index = this.form.urls.indexOf(file.url)
         this.form.urls.splice(index, 1)
+      }
+    },
+    handleUploadPhotoSuccess(response, file, fileList) {
+      if (this.tableIndex !== -1) { // 修改
+        this.form.urls = this.form.urls.concat(response.data.urls.split('\n'))
       }
     },
     updateActivity() {
@@ -181,11 +192,6 @@ export default {
         })
       }
       this.form.date = this.form.date.substring(0, 10)
-    },
-    handleUploadPhotoSuccess(response, file, fileList) {
-      if (this.tableIndex !== -1) { // 修改
-        this.form.urls = this.form.urls.concat(response.data.urls.split('\n'))
-      }
     },
   }
 }
