@@ -7,7 +7,7 @@
       <el-table-column label="操作">
         <template v-slot="scope">
           <el-button @click="editDemo(scope.$index, scope.row)">编辑</el-button>
-          <el-button @click="deleteDemo(scope.$index, scope.row.id)">删除</el-button>
+          <el-button @click="deleteDemo(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -18,7 +18,7 @@
           <el-input v-model="form.title" placeholder="标题"></el-input>
         </el-form-item>
         <el-form-item label="时间" prop="time">
-          <el-date-picker v-model="form.date" type="date" placeholder="选择日期"></el-date-picker>
+          <el-date-picker v-model="form.time" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="组" prop="group">
           <el-input v-model="form.group" placeholder="组"></el-input>
@@ -40,19 +40,36 @@
       </el-form>
       <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
       <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
-      <el-upload ref="photo" action="https://jsonplaceholder.typicode.com/posts/" :file-list="photoList"
-                 :on-change="handleAddPhoto" :on-success="handleUploadPhotoSuccess" :on-preview="downloadPhoto"
-                 :auto-upload="false" list-type="picture" :headers="{token: user.token}">
+      <el-upload
+          ref="photos"
+          :action="this.postPhotoUrl"
+          list-type="picture"
+          :multiple="false"
+          :auto-upload="false"
+          :file-list="photoList"
+          name="photos"
+          :on-change="handleChangePhoto"
+          :before-remove="handleRemovePhoto"
+          :on-success="handleUploadPhotoSuccess"
+          :on-preview="downloadPhoto"
+          :data="{'photoName': JSON.stringify(this.photoName)}">
         <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadPhoto">上传到服务器
+        <el-button size="small" type="success" @click="submitUploadPhoto">上传到服务器
         </el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
-      <el-upload ref="video" action="https://jsonplaceholder.typicode.com/posts/" :file-list="videoList"
-                 :on-success="handleUploadVideoSuccess" :on-preview="downloadVideo"
-                 :auto-upload="false" :headers="{token: user.token}">
+      <el-upload
+          ref="videos"
+          :action="this.postVideoUrl"
+          :multiple="false"
+          :auto-upload="false"
+          :file-list="videoList"
+          name="videos"
+          :before-remove="handleRemoveVideo"
+          :on-success="handleUploadVideoSuccess"
+          :on-preview="downloadVideo">
         <el-button slot="trigger" size="small" type="primary">选取视频</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadVideo">上传到服务器
+        <el-button size="small" type="success" @click="submitUploadVideo">上传到服务器
         </el-button>
       </el-upload>
       <el-button @click="formVisible = false">取消</el-button>
@@ -67,108 +84,171 @@ export default {
   name: 'Demo',
   data() {
     return {
-      photoList: [
-        {
-          name: 'food.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }, {
-          name: 'food2.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ],
-      videoList: [
-        {
-          name: 'food.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }, {
-          name: 'food2.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ],
+      photoList: [],
+      videoList: [],
       user: JSON.parse(localStorage.getItem('user') || '{}'),
       date: '',
       rawName: '',
-      demos: [
-        {
-          id: 1,
-          title: '标题',
-          time: '时间',
-          group: "组",
-          introduction: '简介',
-          photoUrls: 'urls',
-          videoUrls: 'urls',
-          location: '地点',
-          content: '内容',
-          keywords: '1,2,3,4',
-        },
-      ],
+      demos: [],
       formVisible: false,
+      photoName: {},
+      postPhotoUrl: '',
+      postVideoUrl: '',
       tableIndex: -1,
       form: {},
       newTag: ''
     };
   },
+  created() {
+    this.$request.get('/webDemo/all')
+        .then(res => {
+          res.data.forEach(demo => {
+            demo.time = demo.time.substring(0, 10)
+          })
+          this.demos = res.data
+        }).catch(err => {
+      this.$message.error(err)
+    })
+  },
   methods: {
-    submitUploadPhoto() {
-      this.$refs.photo.submit();
-    },
-    handleUploadPhotoSuccess(response, file, fileList) {
-      this.photoList = fileList
-    },
-    handleAddPhoto(file, fileList) {
-      this.date = moment(this.date).format('YYYY-MM-DD')
-      file.name = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
-      this.rawName = ''
-      this.date = ''
-    },
-    editDemo(index, activity) {
-      this.formVisible = true
-      this.form = activity
-      this.tableIndex = index
-      this.form.keywords = this.form.keywords.split(',')
-    },
-    deleteDemo(index, activity) {
-      this.$request.delete('/')
+    deleteDemo(index, demo) {
+      this.$request.delete('/webDemo/' + demo.id)
           .then(res => {
             this.demos.splice(index, 1)
-          }).catch(e => {
-        this.$message.error(index + '在数据库中未被删除')
-        this.demos.splice(index, 1)
+          }).catch(err => {
+        this.$message.error(err)
       })
     },
-    downloadPhoto(file) {
-      window.open(file.url)
+    // ------------------------------------------
+    editDemo(index, demo) {
+      this.form = JSON.parse(JSON.stringify(demo))
+      this.tableIndex = index
+
+      this.photoList = []
+      if (this.form.photoUrls === '') {
+        this.form.photoUrls = []
+      } else {
+        this.form.photoUrls = this.form.photoUrls.split('\n')
+        this.photoList = this.form.photoUrls.map(photoUrl => {
+          const fileName = photoUrl.substring(photoUrl.lastIndexOf('/') + 1)
+          return {url: photoUrl, name: fileName}
+        })
+      }
+      this.photoName = {}
+
+      this.videoList = []
+      if (this.form.videoUrls === '') {
+        this.form.videoUrls = []
+      } else {
+        this.form.videoUrls = this.form.videoUrls.split('\n')
+        this.photoList = this.form.videoUrls.map(videoUrl => {
+          const fileName = videoUrl.substring(videoUrl.lastIndexOf('/') + 1)
+          return {url: videoUrl, name: fileName}
+        })
+      }
+      this.formVisible = true
+      this.form.keywords = this.form.keywords.split(',')
     },
-    updateDemo() {
-      this.$request.put('/', this.form)
-          .then(res => {
-            this.formVisible = false
-            this.$set(this.demos, this.tableIndex, this.form)
-          }).catch(e => {
-        this.formVisible = false
-        this.$set(this.demos, this.tableIndex, this.form)
-      })
+    submitUploadPhoto() {
+      this.postPhotoUrl = `http://localhost:8081/webDemo/${this.form.title}/photo/upload`
+      this.postPhotoUrl = encodeURI(encodeURI(this.postPhotoUrl))
+      this.$refs.photos.submit();
     },
     submitUploadVideo() {
-      this.$refs.video.submit();
+      this.postVideoUrl = `http://localhost:8081/webDemo/${this.form.title}/video/upload`
+      this.postVideoUrl = encodeURI(encodeURI(this.postVideoUrl))
+      this.$refs.videos.submit();
     },
-    handleUploadVideoSuccess(response, file, fileList) {
-      this.videoList = fileList
-    },
-    downloadVideo(file) {
-      window.open(file.url)
+    addNewTag() {
+      this.form.keywords.push(this.newTag)
     },
     handleTagClose(tag) {
       this.form.keywords.forEach((value, index, array) => {
         if (tag === value) {
-          this.$message.info(JSON.stringify(tag))
           array.splice(index, 1)
         }
       })
     },
-    addNewTag() {
-      this.form.keywords.push(this.newTag)
-    }
+    downloadPhoto(file) {
+      let url = `http://localhost:8081/webDemo/${this.form.title}/photo/download/${file.name}`
+      url = encodeURI(encodeURI(url))
+      window.open(file.url)
+    },
+    downloadVideo(file) {
+      let url = `http://localhost:8081/webDemo/${this.form.title}/video/download/${file.name}`
+      url = encodeURI(encodeURI(url))
+      window.open(file.url)
+    },
+    // -------------------------------------------------
+    handleUploadPhotoSuccess(response, file, fileList) {
+      if (this.tableIndex !== -1) { // 修改
+        this.form.photoUrls = this.form.photoUrls.concat(response.data.photoUrls.split('\n'))
+      } else { // 新增
+        this.form.photoUrls = response.data.photoUrls.split('\n')
+      }
+    },
+    handleUploadVideoSuccess(response, file, fileList) {
+      if (this.tableIndex !== -1) { // 修改
+        this.form.videoUrls = this.form.videoUrls.concat(response.data.videoUrls.split('\n'))
+      } else { // 新增
+        this.form.videoUrls = response.data.videoUrls.split('\n')
+      }
+    },
+    handleChangePhoto(file, fileList) {
+      if (file.status === 'ready') { // 添加文件
+        this.date = moment(this.date).format('YYYY-MM-DD')
+        const newName = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
+        this.photoName[file.name] = newName
+        file.name = newName
+
+        this.rawName = ''
+        this.date = ''
+      }
+    },
+    handleRemovePhoto(file, fileList) {
+      if (file.status === 'ready') {
+        Object.keys(this.photoName).forEach(fileName => {
+          if (fileName === file.name) {
+            this.photoName[fileName] = undefined
+          }
+        })
+      } else if (file.status === 'success') {
+        const index = this.form.urls.indexOf(file.url)
+        this.form.urls.splice(index, 1)
+      }
+    },
+    handleRemoveVideo(file, fileList) {
+      if (file.status === 'success') {
+        const index = this.form.videoUrls.indexOf(file.url)
+        this.form.videoUrls.splice(index, 1)
+      }
+    },
+    updateDemo() {
+      this.formVisible = false
+      this.form.time = moment(this.form.time).format('YYYY-MM-DD')
+      this.form.time += ' 00:00:00'
+      this.form.photoUrls = this.form.photoUrls.join('\n')
+      this.form.videoUrls = this.form.videoUrls.join('\n')
+      this.form.keywords = this.form.keywords.join(',')
+      if (this.tableIndex === -1) { // 增加
+        this.$request.post('/webDemo', this.form)
+            .then(res => {
+              this.form.id = res.data.id
+              this.demos.push(this.form)
+              this.$set(this.demos, this.demos.length - 1, this.form)
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      } else { // 修改
+        this.$request.put('/webDemo', this.form)
+            .then(res => {
+              this.$set(this.demos, this.tableIndex, this.form)
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      }
+      this.form.time = this.form.time.substring(0, 10)
+    },
   }
 }
 </script>

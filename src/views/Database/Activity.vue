@@ -119,6 +119,7 @@ export default {
       this.tableIndex = -1
       this.form = {}
       this.form.urls = []
+      this.photoList = []
       this.formVisible = true
     },
     submitUpload() {
@@ -129,6 +130,7 @@ export default {
     editActivity(index, activity) {
       this.form = JSON.parse(JSON.stringify(activity))
       this.tableIndex = index
+      this.photoList = []
       if (this.form.urls === '') {
         this.form.urls = []
       } else {
@@ -167,23 +169,25 @@ export default {
     handleUploadPhotoSuccess(response, file, fileList) {
       if (this.tableIndex !== -1) { // 修改
         this.form.urls = this.form.urls.concat(response.data.urls.split('\n'))
+      } else { // 新增
+        this.form.urls = response.data.urls.split('\n')
       }
     },
     updateActivity() {
       this.formVisible = false
       this.form.date = moment(this.form.date).format('YYYY-MM-DD')
       this.form.date += ' 00:00:00'
+      this.form.urls = this.form.urls.join('\n')
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webActivity', this.form)
             .then(res => {
               this.form.id = res.data.id
               this.activities.push(this.form)
-              this.$set(this.activities, this.users.length - 1, this.form)
+              this.$set(this.activities, this.activities.length - 1, this.form)
             }).catch(err => {
           this.$message.error(err)
         })
       } else { // 修改
-        this.form.urls = this.form.urls.join('\n')
         this.$request.put('/webActivity', this.form)
             .then(res => {
               this.$set(this.activities, this.tableIndex, this.form)
