@@ -187,7 +187,6 @@ export default {
       url = encodeURI(encodeURI(url))
       window.open(file.url)
     },
-    // -------------------------------------------------
     handleUploadPhotoSuccess(response, file, fileList) {
       if (this.tableIndex !== -1) { // 修改
         this.form.photoUrls = this.form.photoUrls.concat(response.data.photoUrls.split('\n'))
