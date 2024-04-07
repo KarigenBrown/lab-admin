@@ -47,7 +47,7 @@
           <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
           <el-upload
               ref="photos"
-              :action="this.postPhotoUrl"
+              :action="encodeURI(encodeURI(`http://localhost:8081/webDemo/${this.form.title}/photo/upload`))"
               list-type="picture"
               :multiple="false"
               :auto-upload="false"
@@ -65,7 +65,7 @@
           </el-upload>
           <el-upload
               ref="videos"
-              :action="this.postVideoUrl"
+              :action="encodeURI(encodeURI(`http://localhost:8081/webDemo/${this.form.title}/video/upload`))"
               :multiple="false"
               :auto-upload="false"
               :file-list="videoList"
@@ -99,8 +99,6 @@ export default {
       demos: [],
       formVisible: false,
       photoName: {},
-      postPhotoUrl: '',
-      postVideoUrl: '',
       tableIndex: -1,
       form: {},
       newTag: ''
@@ -156,17 +154,12 @@ export default {
       this.form.keywords = this.form.keywords.split(',')
     },
     submitUploadPhoto() {
-      this.postPhotoUrl = `http://localhost:8081/webDemo/${this.form.title}/photo/upload`
-      this.postPhotoUrl = encodeURI(encodeURI(this.postPhotoUrl))
       this.$refs.photos.submit();
     },
     submitUploadVideo() {
-      this.postVideoUrl = `http://localhost:8081/webDemo/${this.form.title}/video/upload`
-      this.postVideoUrl = encodeURI(encodeURI(this.postVideoUrl))
       this.$refs.videos.submit();
     },
     addNewTag() {
-      // this.$message.info(JSON.stringify(this.form.keywords))
       this.form.keywords.push(this.newTag)
       this.newTag = ''
     },

@@ -40,7 +40,7 @@
           <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
           <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
           <el-upload ref="photos"
-                     :action="postPhotoUrl"
+                     :action="encodeURI(encodeURI(`http://localhost:8081/webActivity/${this.form.title}/photo/upload`))"
                      list-type="picture"
                      :multiple="false"
                      :auto-upload="false"
@@ -79,7 +79,6 @@ export default {
       form: {},
       queryActivityTitle: '',
       photoName: {},
-      postPhotoUrl: '',
     };
   },
   created() {
@@ -123,8 +122,6 @@ export default {
       this.formVisible = true
     },
     submitUpload() {
-      this.postPhotoUrl = `http://localhost:8081/webActivity/${this.form.title}/photo/upload`
-      this.postPhotoUrl = encodeURI(encodeURI(this.postPhotoUrl))
       this.$refs.photos.submit()
     },
     editActivity(index, activity) {
