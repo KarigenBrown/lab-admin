@@ -6,7 +6,9 @@
       <el-table-column label="用户名" prop="username"></el-table-column>
       <el-table-column label="权限" prop="permits">
         <template v-slot="scope">
-          <el-tag v-for="permit in users[scope.$index].permits" :key="permit">{{ permit }}</el-tag>
+          <el-tag v-for="permit in users[scope.$index].permits" :key="permit">
+            {{ permit }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作">

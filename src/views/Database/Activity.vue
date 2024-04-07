@@ -28,13 +28,15 @@
               <el-input v-model="form.title" placeholder="标题"></el-input>
             </el-form-item>
             <el-form-item label="时间" prop="date">
-              <el-date-picker v-model="form.date" type="date" placeholder="选择日期"></el-date-picker>
+              <el-date-picker v-model="form.date" type="date" placeholder="选择日期">
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="简介" prop="introduction">
               <el-input v-model="form.introduction" placeholder="简介"></el-input>
             </el-form-item>
             <el-form-item label="内容" prop="content">
-              <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
+              <el-input type="textarea" autosize v-model="form.content" placeholder="内容">
+              </el-input>
             </el-form-item>
           </el-form>
           <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
@@ -143,7 +145,9 @@ export default {
     handleChangePhoto(file, fileList) {
       if (file.status === 'ready') { // 添加文件
         this.date = moment(this.date).format('YYYY-MM-DD')
-        const newName = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
+        const newName = this.date + '_' + this.rawName + file.name.substring(
+            file.name.lastIndexOf('.')
+        )
         this.photoName[file.name] = newName
         file.name = newName
 

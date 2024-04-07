@@ -23,7 +23,10 @@
           <el-table-column label="身份" prop="identity"></el-table-column>
           <el-table-column label="操作">
             <template v-slot="scope">
-              <el-button v-if="scope.row.identity.endsWith('生')" @click="editUser(scope.$index, scope.row)">编辑
+              <el-button
+                  v-if="scope.row.identity.endsWith('生')"
+                  @click="editUser(scope.$index, scope.row)">
+                编辑
               </el-button>
               <el-button @click="deleteUser(scope.$index, scope.row.id)">删除</el-button>
             </template>
@@ -47,13 +50,18 @@
             </el-form-item>
             <el-form-item v-if="form.identity === '在校生'" label="年级" prop="grade">
               <el-select v-model="form.grade">
-                <el-option v-for="item in ['研一', '研二', '研三']" :key="item" :label="item" :value="item">
+                <el-option
+                    v-for="item in ['研一', '研二', '研三']"
+                    :key="item"
+                    :label="item"
+                    :value="item">
                 </el-option>
               </el-select>
             </el-form-item>
             <div v-if="form.identity === '毕业生'">
               <el-form-item label="毕业时间" prop="graduationTime">
-                <el-date-picker v-model="form.graduationTime" type="date" placeholder="选择日期"></el-date-picker>
+                <el-date-picker v-model="form.graduationTime" type="date" placeholder="选择日期">
+                </el-date-picker>
               </el-form-item>
               <el-form-item label="毕业去向" prop="graduationDestination">
                 <el-input v-model="form.graduationDestination" placeholder="毕业去向"></el-input>
@@ -76,7 +84,7 @@ export default {
       queryUsername: '',
       form: {},
       formVisible: false,
-      formIndex: -1,
+      tableIndex: -1,
       identities: ['教授', '副教授', '在校生', '毕业生'],
       queryUserIdentity: '',
       choice: ''
@@ -109,7 +117,7 @@ export default {
     editUser(index, row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.formVisible = true
-      this.formIndex = index
+      this.tableIndex = index
     },
     deleteUser(index, id) {
       this.$request.delete('/webMember/' + id)
@@ -120,13 +128,13 @@ export default {
       })
     },
     addUser() {
-      this.formIndex = -1
+      this.tableIndex = -1
       this.form = {}
       this.formVisible = true
     },
     updateUser() {
       this.formVisible = false
-      if (this.formIndex === -1) { // 增加
+      if (this.tableIndex === -1) { // 增加
         this.$request.post('/webMember', this.form)
             .then(res => {
               this.form.id = res.data.id
@@ -139,7 +147,7 @@ export default {
         this.$request.put('/webMember', this.form)
             .then(res => {
               this.formVisible = false
-              this.$set(this.users, this.formIndex, this.form)
+              this.$set(this.users, this.tableIndex, this.form)
             }).catch(err => {
           this.$message.error(err)
         })

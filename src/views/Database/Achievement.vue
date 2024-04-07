@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-container>
-      <el-header>
+      <el-header style="height: 15vh">
         <el-select v-model="choice" placeholder="请选择" @change="typeChange">
           <el-option v-for="item in types" :key="item" :label="item" :value="item">
           </el-option>
@@ -9,16 +9,19 @@
         <el-input
             v-model="achievementTitle"
             size="mini"
-            placeholder="查询活动"/>
-        <el-radio v-model="articleType" label="年份">年份</el-radio>
-        <el-radio v-model="articleType" label="期刊（首字母）">期刊（首字母）</el-radio>
-        <el-radio v-model="articleType" label="作者">作者</el-radio>
+            placeholder="查询成就"/>
+        <div v-if="this.choice === '论文'">
+          <el-radio v-model="articleType" label="标题">标题</el-radio>
+          <el-radio v-model="articleType" label="年份">年份</el-radio>
+          <el-radio v-model="articleType" label="期刊（首字母）">期刊（首字母）</el-radio>
+          <el-radio v-model="articleType" label="作者">作者</el-radio>
+        </div>
         <el-button @click="queryAchievement">查询</el-button>
         <el-button @click="addAchievement">新增</el-button>
       </el-header>
       <el-main v-if="isReloadData">
         <div v-if="choice !== '项目'">
-          <el-table :data="nonProjectAchievements">
+          <el-table :data="nonProjects">
             <el-table-column label="id" prop="id"></el-table-column>
             <el-table-column label="标题" prop="title"></el-table-column>
             <el-table-column label="期刊" prop="journal"></el-table-column>
@@ -33,7 +36,7 @@
             <el-table-column label="操作">
               <template v-slot="scope">
                 <el-button @click="editNonProject(scope.$index, scope.row)">编辑</el-button>
-                <el-button @click="deleteNonProject(scope.$index, scope.row.id)">删除</el-button>
+                <el-button @click="deleteNonProject(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -54,7 +57,8 @@
                 <el-input v-model="form.authors" placeholder="其他作者"></el-input>
               </el-form-item>
               <el-form-item label="时间" prop="date">
-                <el-date-picker v-model="form.date" type="date" placeholder="时间"></el-date-picker>
+                <el-date-picker v-model="form.date" type="date" placeholder="时间">
+                </el-date-picker>
               </el-form-item>
               <el-form-item label="详情页链接" prop="link">
                 <el-input v-model="form.link" placeholder="详情页链接"></el-input>
@@ -73,26 +77,34 @@
               </el-form-item>
               <el-form-item label="类别" prop="category">
                 <el-select v-model="form.category">
-                  <el-option v-for="item in ['论文', '专利', '著作', '软著', '技术标准', '竞赛获奖']" :key="item"
-                             :label="item" :value="item">
+                  <el-option v-for="item in ['论文', '专利', '著作', '软著', '技术标准', '竞赛获奖']"
+                             :key="item"
+                             :label="item"
+                             :value="item">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="论文首字母" prop="initials">
                 <el-input v-model="form.initials" placeholder="论文首字母"></el-input>
               </el-form-item>
-              <el-form-item v-if="form.category === '论文'" label="是否为实验室内部论文" prop="internal">
+              <el-form-item v-if="form.category === '论文'"
+                            label="是否为实验室内部论文"
+                            prop="internal">
                 <el-radio v-model="form.internal" label="1">是</el-radio>
                 <el-radio v-model="form.internal" label="0">否</el-radio>
               </el-form-item>
-              <el-form-item v-if="form.category === '论文'" label="论文状态" prop="articleStatus">
+              <el-form-item v-if="form.category === '论文'"
+                            label="论文状态"
+                            prop="articleStatus">
                 <el-steps :active="form.articleStatus" finish-status="success">
                   <el-step title="草稿"></el-step>
                   <el-step title="已发布"></el-step>
                 </el-steps>
                 <el-button @click="nextStatus">下一步</el-button>
               </el-form-item>
-              <el-form-item v-else-if="form.category === '技术标准'" label="技术标准状态" prop="techniqueStatus">
+              <el-form-item v-else-if="form.category === '技术标准'"
+                            label="技术标准状态"
+                            prop="techniqueStatus">
                 <el-steps :active="form.techniqueStatus" finish-status="success">
                   <el-step title="申请中"></el-step>
                   <el-step title="已授权"></el-step>
@@ -117,7 +129,7 @@
             <el-table-column label="操作">
               <template v-slot="scope">
                 <el-button @click="editProject(scope.$index, scope.row)">编辑</el-button>
-                <el-button @click="deleteProject(scope.$index, scope.row.id)">删除</el-button>
+                <el-button @click="deleteProject(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -215,31 +227,36 @@ export default {
           techniqueStatus: 0
         }
       ],
-      nonProjectAchievements: [],
       isReloadData: true,
       formVisible: false,
       form: {},
       achievementTitle: '',
-      articleType:''
+      articleType: '标题'
     }
   },
   created() {
-    this.nonProjects.filter((value, index, array) => {
-      return value.category === '论文'
-    }).forEach((value, index, array) => {
-      this.nonProjectAchievements.push(value)
+    this.$request.get(`/webAchievement/${this.choice}/all`)
+        .then(res => {
+          this.nonProjects = res.data
+        }).catch(err => {
+      this.$message.error(err)
     })
   },
   methods: {
     typeChange() {
-      this.nonProjectAchievements = []
-      if (this.choice === '项目') {
-
+      if (this.choice !== '项目') {
+        this.$request.get(`/webAchievement/${this.choice}/all`)
+            .then(res => {
+              this.nonProjects = res.data
+            }).catch(err => {
+          this.$message.error(err)
+        })
       } else {
-        this.nonProjects.filter((value, index, array) => {
-          return value.category === this.choice
-        }).forEach((value, index, array) => {
-          this.nonProjectAchievements.push(value)
+        this.$request.get('/webProject/all')
+            .then(res => {
+              this.projects = res.data
+            }).catch(err => {
+          this.$message.error(err)
         })
       }
 
@@ -249,84 +266,70 @@ export default {
       })
     },
     editProject(index, row) {
-      this.$request.put('/', row)
-          .then(res => {
-            this.form = JSON.parse(JSON.stringify(row))
-            this.formVisible = true
-            this.formIndex = index
-          }).catch(e => {
-        this.form = JSON.parse(JSON.stringify(row))
-        this.formVisible = true
-        this.formIndex = index
-      })
+      this.form = JSON.parse(JSON.stringify(row))
+      this.tableIndex = index
+      this.formVisible = true
     },
-    deleteProject(index, id) {
-      this.$request.delete('/' + id)
+    deleteProject(index, project) {
+      this.$request.delete('/webProject/' + project.id)
           .then(res => {
-            this.users.splice(index, 1)
-          }).catch(e => {
-        this.$message.error(index + '在数据库中未被删除')
-        this.users.splice(index, 1)
+            this.projects.splice(index, 1)
+          }).catch(err => {
+        this.$message.error(err)
       })
     },
     updateProject() {
-      // this.$request.put('/', this.form)
-      //     .then(res => {
-      //       this.formVisible = false
-      //       this.$set(this.users, this.formIndex, this.form)
-      //     }).catch(e => {
-      //   this.formVisible = false
-      //   this.$set(this.users, this.formIndex, this.form)
-      // })
-      this.formVisible = false
-      if (this.tableIndex === -1) {
-        this.projects.push(this.form)
-        this.$set(this.projects, this.users.length - 1, this.form)
-      } else {
-        this.$set(this.projects, this.formIndex, this.form)
+      if (this.tableIndex === -1) { // 增加
+        this.$request.post('/webProject', this.form)
+            .then(res => {
+              this.form.id = res.data.id
+              this.projects.push(this.form)
+              this.$set(this.projects, this.projects.length - 1, this.form)
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      } else { // 修改
+        this.$request.put('/webProject', this.form)
+            .then(res => {
+              this.$set(this.projects, this.tableIndex, this.form)
+            }).catch(err => {
+          this.$message.error(err)
+        })
       }
+      this.formVisible = false
     },
     editNonProject(index, row) {
-      // this.$request.put('/', row)
-      //     .then(res => {
-      //       this.form = JSON.parse(JSON.stringify(row))
-      //       this.formVisible = true
-      //       this.formIndex = index
-      //     }).catch(e => {
-      //   this.form = JSON.parse(JSON.stringify(row))
-      //   this.formVisible = true
-      //   this.formIndex = index
-      // })
       this.form = JSON.parse(JSON.stringify(row))
+      this.tableIndex = index
       this.formVisible = true
-      this.formIndex = index
     },
-    deleteNonProject(index, id) {
-      this.$request.delete('/' + id)
+    deleteNonProject(index, nonProject) {
+      this.$request.delete('/webAchievement/' + nonProject.id)
           .then(res => {
-            this.users.splice(index, 1)
-          }).catch(e => {
-        this.$message.error(index + '在数据库中未被删除')
-        this.users.splice(index, 1)
+            this.nonProjects.splice(index, 1)
+          }).catch(err => {
+        this.$message.error(err)
       })
     },
     updateNonProject() {
-      // this.$request.put('/', this.form)
-      //     .then(res => {
-      //       this.formVisible = false
-      //       this.$set(this.users, this.formIndex, this.form)
-      //     }).catch(e => {
-      //   this.formVisible = false
-      //   this.$set(this.users, this.formIndex, this.form)
-      // })
-      this.formVisible = false
-      this.form.date = moment(this.form.date).format('YYYY-MM-DD')
-      if (this.tableIndex === -1) {
-        this.nonProjectAchievements.push(this.form)
-        this.$set(this.nonProjectAchievements, this.users.length - 1, this.form)
-      } else {
-        this.$set(this.nonProjectAchievements, this.formIndex, this.form)
+      if (this.tableIndex === -1) { // 增加
+        this.$request.post('/webAchievement', this.form)
+            .then(res => {
+              this.form.id = res.data.id
+              this.nonProjects.push(this.form)
+              this.$set(this.nonProjects, this.nonProjects.length - 1, this.form)
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      } else { // 修改
+        this.$request.put('/webAchievement', this.form)
+            .then(res => {
+              this.$set(this.nonProjects, this.tableIndex, this.form)
+            }).catch(err => {
+          this.$message.error(err)
+        })
       }
+      this.formVisible = false
     },
     nextStatus() {
       if (this.form.category === '论文' && this.form.articleStatus < 2) {
@@ -339,14 +342,32 @@ export default {
     },
     queryAchievement() {
       if (this.choice === '项目') {
-
+        this.$request.get('/webProject/' + this.achievementTitle)
+            .then(res => {
+              this.projects = res.data
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      } else if (this.choice === '论文') {
+        this.$request.get(`/webAchievement/${this.choice}/type/${this.articleType}/${this.achievementTitle}`)
+            .then(res => {
+              this.nonProjects = res.data
+            }).catch(err => {
+          this.$message.error(err)
+        })
       } else {
-
+        this.$request.get(`/webAchievement/${this.choice}/${this.achievementTitle}`)
+            .then(res => {
+              this.nonProjects = res.data
+            }).catch(err => {
+          this.$message.error(err)
+        })
       }
     },
     addAchievement() {
       this.tableIndex = -1
       this.form = {}
+      this.form.category = this.choice
       this.formVisible = true
     }
   }

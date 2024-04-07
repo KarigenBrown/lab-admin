@@ -25,7 +25,10 @@
         {{ userInfo.graduationTime }}
         <el-checkbox v-model="userInfoHidden.graduationTime">隐藏</el-checkbox>
       </el-form-item>
-      <el-form-item v-if="userInfo.identity === '毕业生'" label="毕业去向" prop="graduationDestination">
+      <el-form-item
+          v-if="userInfo.identity === '毕业生'"
+          label="毕业去向"
+          prop="graduationDestination">
         {{ userInfo.graduationDestination }}
         <el-checkbox v-model="userInfoHidden.graduationDestination">隐藏</el-checkbox>
       </el-form-item>

@@ -2,7 +2,8 @@
   <div>
     <el-row>
       <el-col :span="8">
-        <el-avatar :src="userInfo.photoUrl" shape="square" :size="250" :key="userInfo.photoUrl"></el-avatar>
+        <el-avatar :src="userInfo.photoUrl" shape="square" :size="250" :key="userInfo.photoUrl">
+        </el-avatar>
       </el-col>
       <el-col :span="16">
         <el-descriptions title="用户信息" v-model="userInfo">
@@ -47,13 +48,19 @@
           <el-input v-model="form.contact">{{ form.contact }}</el-input>
         </el-form-item>
         <el-form-item label="研究方向" prop="research">
-          <el-input type="textarea" autosize v-model="form.research">{{ form.research }}</el-input>
+          <el-input type="textarea" autosize v-model="form.research">
+            {{ form.research }}
+          </el-input>
         </el-form-item>
         <el-form-item label="成就" prop="achievement">
-          <el-input type="textarea" autosize v-model="form.achievement">{{ form.achievement }}</el-input>
+          <el-input type="textarea" autosize v-model="form.achievement">
+            {{ form.achievement }}
+          </el-input>
         </el-form-item>
         <el-form-item label="简介" prop="introduction">
-          <el-input type="textarea" autosize v-model="form.introduction">{{ form.introduction }}</el-input>
+          <el-input type="textarea" autosize v-model="form.introduction">
+            {{ form.introduction }}
+          </el-input>
         </el-form-item>
       </el-form>
       <el-button @click="formVisible = false">取消</el-button>

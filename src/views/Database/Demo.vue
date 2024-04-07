@@ -23,7 +23,8 @@
               <el-input v-model="form.title" placeholder="标题"></el-input>
             </el-form-item>
             <el-form-item label="时间" prop="time">
-              <el-date-picker v-model="form.time" type="date" placeholder="选择日期"></el-date-picker>
+              <el-date-picker v-model="form.time" type="date" placeholder="选择日期">
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="组" prop="group">
               <el-input v-model="form.group" placeholder="组"></el-input>
@@ -35,10 +36,13 @@
               <el-input v-model="form.location" placeholder="地点"></el-input>
             </el-form-item>
             <el-form-item label="内容" prop="content">
-              <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
+              <el-input type="textarea" autosize v-model="form.content" placeholder="内容">
+              </el-input>
             </el-form-item>
             <el-form-item label="关键字" prop="keywords">
-              <el-tag closable v-for="tag in form.keywords" :key="tag" @close="handleTagClose(tag)">{{ tag }}</el-tag>
+              <el-tag closable v-for="tag in form.keywords" :key="tag" @close="handleTagClose(tag)">
+                {{ tag }}
+              </el-tag>
               <el-input v-model="newTag" placeholder="新关键字"></el-input>
               <el-button @click="addNewTag">增加</el-button>
             </el-form-item>
@@ -197,7 +201,9 @@ export default {
     handleChangePhoto(file, fileList) {
       if (file.status === 'ready') { // 添加文件
         this.date = moment(this.date).format('YYYY-MM-DD')
-        const newName = this.date + '_' + this.rawName + file.name.substring(file.name.lastIndexOf('.'))
+        const newName = this.date + '_' + this.rawName + file.name.substring(
+            file.name.lastIndexOf('.')
+        )
         this.photoName[file.name] = newName
         file.name = newName
 

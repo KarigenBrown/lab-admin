@@ -10,9 +10,9 @@ request.interceptors.request.use(config => {
     // let user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
     // config.headers['token'] = user?.token
     return config
-}, error => {
-    console.error('request error: ' + error)
-    return Promise.reject(error)
+}, err => {
+    this.$message.error(err)
+    return Promise.reject(err)
 })
 
 request.interceptors.response.use(response => {
@@ -21,9 +21,9 @@ request.interceptors.response.use(response => {
         res = res ? JSON.parse(res) : res
     }
     return res
-}, error => {
-    console.error('response error: ' + error)
-    return Promise.reject(error)
+}, err => {
+    this.$message.error(err)
+    return Promise.reject(err)
 })
 
 export default request

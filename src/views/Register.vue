@@ -11,7 +11,8 @@
             <el-input show-password placeholder="请输入密码" v-model="user.password"></el-input>
           </el-form-item>
           <el-form-item prop="conformPassword">
-            <el-input show-password placeholder="请确认密码" v-model="user.conformPassword"></el-input>
+            <el-input show-password placeholder="请确认密码" v-model="user.conformPassword">
+            </el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="register">注册</el-button>
