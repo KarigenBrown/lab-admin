@@ -6,4 +6,16 @@ function testList() {
     console.log(JSON.stringify(list))
 }
 
-testList()
+function testPlusPlus() {
+    let text = '1'
+    text++
+    console.log(text)
+}
+
+function testSplit() {
+    let text = ''
+    text = text.split(',')
+    console.log(JSON.stringify(text))
+}
+
+testSplit()
