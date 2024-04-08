@@ -155,7 +155,7 @@ export default {
         })
       }
       this.formVisible = true
-      this.form.keywords = this.form.keywords.split(',')
+      this.form.keywords = this.form.keywords === '' ? [] : this.form.keywords.split(',')
     },
     submitUploadPhoto() {
       this.$refs.photos.submit();

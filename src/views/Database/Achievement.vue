@@ -27,7 +27,7 @@
             <el-table-column label="期刊" prop="journal"></el-table-column>
             <el-table-column label="第一作者" prop="author"></el-table-column>
             <el-table-column label="其他作者" prop="authors"></el-table-column>
-            <el-table-column label="时间" prop="date"></el-table-column>
+            <el-table-column label="论文年份" prop="theyear"></el-table-column>
             <el-table-column v-if="choice === '论文'" label="论文状态" prop="articleStatus">
               <template v-slot="scope">
                 {{ scope.row.articleStatus === 0 ? '草稿' : '已发布' }}
@@ -43,7 +43,10 @@
 
           <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
             <el-form :model="form">
-              <el-form-item label="id" prop="id"></el-form-item>
+              <el-form-item
+                  v-if="this.tableIndex !== -1"
+                  label="id"
+                  prop="id"></el-form-item>
               <el-form-item label="标题" prop="title">
                 <el-input v-model="form.title" placeholder="标题"></el-input>
               </el-form-item>
@@ -56,9 +59,8 @@
               <el-form-item label="其他作者" prop="authors">
                 <el-input v-model="form.authors" placeholder="其他作者"></el-input>
               </el-form-item>
-              <el-form-item label="时间" prop="date">
-                <el-date-picker v-model="form.date" type="date" placeholder="时间">
-                </el-date-picker>
+              <el-form-item label="论文年份" prop="theyear">
+                <el-input v-model="form.theyear" placeholder="论文年份"></el-input>
               </el-form-item>
               <el-form-item label="详情页链接" prop="link">
                 <el-input v-model="form.link" placeholder="详情页链接"></el-input>
@@ -66,37 +68,27 @@
               <el-form-item label="代码" prop="papercode">
                 <el-input v-model="form.papercode" placeholder="代码"></el-input>
               </el-form-item>
-              <el-form-item label="代码" prop="papercode">
-                <el-input v-model="form.papercode" placeholder="代码"></el-input>
-              </el-form-item>
-              <el-form-item label="论文年份" prop="theyear">
-                <el-input v-model="form.theyear" placeholder="论文年份"></el-input>
-              </el-form-item>
               <el-form-item label="摘要" prop="abstract">
                 <el-input v-model="form.abstract" placeholder="摘要"></el-input>
               </el-form-item>
-              <el-form-item label="类别" prop="category">
-                <el-select v-model="form.category">
-                  <el-option v-for="item in ['论文', '专利', '著作', '软著', '技术标准', '竞赛获奖']"
-                             :key="item"
-                             :label="item"
-                             :value="item">
-                  </el-option>
-                </el-select>
-              </el-form-item>
+              <el-form-item label="类别" prop="category">{{ form.category }}</el-form-item>
               <el-form-item label="论文首字母" prop="initials">
                 <el-input v-model="form.initials" placeholder="论文首字母"></el-input>
               </el-form-item>
               <el-form-item v-if="form.category === '论文'"
                             label="是否为实验室内部论文"
                             prop="internal">
-                <el-radio v-model="form.internal" label="1">是</el-radio>
-                <el-radio v-model="form.internal" label="0">否</el-radio>
+                <el-radio-group v-model="form.internal">
+                  <el-radio label="1">是</el-radio>
+                  <el-radio label="0">否</el-radio>
+                </el-radio-group>
               </el-form-item>
               <el-form-item v-if="form.category === '论文'"
                             label="论文状态"
                             prop="articleStatus">
-                <el-steps :active="form.articleStatus" finish-status="success">
+                <el-steps
+                    :active="form.articleStatus"
+                    finish-status="success">
                   <el-step title="草稿"></el-step>
                   <el-step title="已发布"></el-step>
                 </el-steps>
@@ -112,8 +104,10 @@
                 <el-button @click="nextStatus">下一步</el-button>
               </el-form-item>
               <el-form-item label="是否隐藏" prop="hidden">
-                <el-radio v-model="form.hidden" label="1">是</el-radio>
-                <el-radio v-model="form.hidden" label="0">否</el-radio>
+                <el-radio-group v-model="form.hidden">
+                  <el-radio label="1">是</el-radio>
+                  <el-radio label="0">否</el-radio>
+                </el-radio-group>
               </el-form-item>
             </el-form>
             <el-button @click="formVisible = false">取消</el-button>
@@ -136,26 +130,29 @@
 
           <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
             <el-form :model="form">
-              <el-table-column label="id" prop="id"></el-table-column>
-              <el-table-column label="项目名称" prop="name">
+              <el-form-item
+                  v-if="this.tableIndex !== -1"
+                  label="id"
+                  prop="id"></el-form-item>
+              <el-form-item label="项目名称" prop="name">
                 <el-input v-model="form.name" placeholder="项目名称"></el-input>
-              </el-table-column>
-              <el-table-column label="项目链接" prop="link">
+              </el-form-item>
+              <el-form-item label="项目链接" prop="link">
                 <el-input v-model="form.link" placeholder="项目链接"></el-input>
-              </el-table-column>
+              </el-form-item>
               <el-form-item label="项目年份" prop="theyear">
                 <el-input v-model="form.theyear" placeholder="项目年份"></el-input>
               </el-form-item>
               <el-form-item label="内容" prop="content">
                 <el-input v-model="form.content" placeholder="内容"></el-input>
               </el-form-item>
-              <el-table-column label="项目状态" prop="status">
+              <el-form-item label="项目状态" prop="status">
                 <el-steps :active="form.status" finish-status="success">
                   <el-step title="在研"></el-step>
                   <el-step title="结题"></el-step>
                 </el-steps>
                 <el-button @click="nextStatus">下一步</el-button>
-              </el-table-column>
+              </el-form-item>
             </el-form>
             <el-button @click="formVisible = false">取消</el-button>
             <el-button @click="updateProject">确定</el-button>
@@ -166,8 +163,6 @@
   </div>
 </template>
 <script>
-import moment from "moment/moment";
-
 export default {
   name: 'Achievement',
   data() {
@@ -175,63 +170,64 @@ export default {
       types: ['论文', '专利', '项目', '著作', '软著', '技术标准', '竞赛获奖'],
       choice: '论文',
       projects: [
-        {
-          id: 1,
-          name: '项目1',
-          link: '项目链接1',
-          theyear: '项目年份1',
-          status: 0
-        }, {
-          id: 2,
-          name: '项目2',
-          link: '项目链接2',
-          theyear: '项目年份2',
-          status: 1
-        },
+        // {
+        //   id: 1,
+        //   name: '项目1',
+        //   link: '项目链接1',
+        //   theyear: '项目年份1',
+        //   status: 0
+        // }, {
+        //   id: 2,
+        //   name: '项目2',
+        //   link: '项目链接2',
+        //   theyear: '项目年份2',
+        //   status: 1
+        // },
       ],
       nonProjects: [
-        {
-          id: 1,
-          title: 'title',
-          journal: 'journal',
-          author: 'author',
-          authors: 'authors',
-          date: '2020-01-01',
-          link: 'url',
-          papercode: 'code',
-          theyear: '2020',
-          abstract: 'abstract',
-          category: '论文',
-          initials: 'j',
-          internal: '1',
-          articleStatus: 0,
-          hidden: '1',
-          techniqueStatus: 0
-        },
-        {
-          id: 1,
-          title: 'title',
-          journal: 'journal',
-          author: 'author',
-          authors: 'authors',
-          date: '2020-01-01',
-          link: 'url',
-          papercode: 'code',
-          theyear: '2020',
-          abstract: 'abstract',
-          category: '技术标准',
-          initials: 'j',
-          internal: '1',
-          articleStatus: 0,
-          hidden: '1',
-          techniqueStatus: 0
-        }
+        // {
+        //   id: 1,
+        //   title: 'title',
+        //   journal: 'journal',
+        //   author: 'author',
+        //   authors: 'authors',
+        //   date: '2020-01-01',
+        //   link: 'url',
+        //   papercode: 'code',
+        //   theyear: '2020',
+        //   abstract: 'abstract',
+        //   category: '论文',
+        //   initials: 'j',
+        //   internal: '1',
+        //   articleStatus: 0,
+        //   hidden: '1',
+        //   techniqueStatus: 0
+        // },
+        // {
+        //   id: 1,
+        //   title: 'title',
+        //   journal: 'journal',
+        //   author: 'author',
+        //   authors: 'authors',
+        //   date: '2020-01-01',
+        //   link: 'url',
+        //   papercode: 'code',
+        //   theyear: '2020',
+        //   abstract: 'abstract',
+        //   category: '技术标准',
+        //   initials: 'j',
+        //   internal: '1',
+        //   articleStatus: 0,
+        //   hidden: '1',
+        //   techniqueStatus: 0
+        // }
       ],
       isReloadData: true,
       formVisible: false,
       form: {},
       achievementTitle: '',
-      articleType: '标题'
+      articleType: '标题',
+      tableIndex: -1,
     }
   },
   created() {
@@ -268,6 +264,10 @@ export default {
     editProject(index, row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.tableIndex = index
+
+      // todo 改
+      this.form.status = Number(this.form.status)
+
       this.formVisible = true
     },
     deleteProject(index, project) {
@@ -279,6 +279,10 @@ export default {
       })
     },
     updateProject() {
+
+      // todo 改
+      this.form.status = Number(this.form.status)
+
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webProject', this.form)
             .then(res => {
@@ -301,6 +305,13 @@ export default {
     editNonProject(index, row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.tableIndex = index
+
+      // todo 改
+      this.form.articleStatus = Number(this.form.articleStatus)
+      this.form.techniqueStatus = Number(this.form.techniqueStatus)
+      this.form.internal = String(this.form.internal)
+      this.form.hidden = String(this.form.hidden)
+
       this.formVisible = true
     },
     deleteNonProject(index, nonProject) {
@@ -312,6 +323,13 @@ export default {
       })
     },
     updateNonProject() {
+
+      // todo 改
+      this.form.articleStatus = String(this.form.articleStatus)
+      this.form.techniqueStatus = String(this.form.techniqueStatus)
+      this.form.internal = Number(this.form.internal)
+      this.form.hidden = Number(this.form.hidden)
+
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webAchievement', this.form)
             .then(res => {
@@ -345,6 +363,9 @@ export default {
         this.$request.get('/webProject/' + this.achievementTitle)
             .then(res => {
               this.projects = res.data
+              this.projects.forEach(value => {
+                value.status = Number(value.status)
+              })
             }).catch(err => {
           this.$message.error(err)
         })
@@ -368,6 +389,9 @@ export default {
       this.tableIndex = -1
       this.form = {}
       this.form.category = this.choice
+      this.form.status = 1
+      this.form.articleStatus = 1
+      this.form.techniqueStatus = 1
       this.formVisible = true
     }
   }

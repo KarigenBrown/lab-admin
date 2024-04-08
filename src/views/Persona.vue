@@ -64,7 +64,7 @@ export default {
     this.$request.get('/webMember/' + userNumber)
         .then(res => {
           this.userInfo = res.data
-          this.userInfo.hiddenFields = this.userInfo.hiddenFields.split(',')
+          this.userInfo.hiddenFields = this.userInfo.hiddenFields === '' ? [] : this.userInfo.hiddenFields.split(',')
           this.userInfoHidden = JSON.parse(JSON.stringify(this.userInfo))
           Object.keys(this.userInfoHidden).forEach(key => this.userInfoHidden[key] = false)
           this.userInfo.hiddenFields.forEach(field => this.userInfoHidden[field] = true)
@@ -82,11 +82,11 @@ export default {
       })
       this.userInfo.hiddenFields = hiddenFields.join(',')
       this.$request.put('/webMember', this.userInfo)
-          .then(res=>{
+          .then(res => {
             this.$message.success('修改成功')
           }).catch(err => {
-            this.$message.error(err)
-          })
+        this.$message.error(err)
+      })
     }
   }
 }
