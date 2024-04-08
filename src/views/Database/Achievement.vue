@@ -264,10 +264,6 @@ export default {
     editProject(index, row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.tableIndex = index
-
-      // todo 改
-      this.form.status = Number(this.form.status)
-
       this.formVisible = true
     },
     deleteProject(index, project) {
@@ -279,10 +275,6 @@ export default {
       })
     },
     updateProject() {
-
-      // todo 改
-      this.form.status = Number(this.form.status)
-
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webProject', this.form)
             .then(res => {
@@ -305,13 +297,6 @@ export default {
     editNonProject(index, row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.tableIndex = index
-
-      // todo 改
-      this.form.articleStatus = Number(this.form.articleStatus)
-      this.form.techniqueStatus = Number(this.form.techniqueStatus)
-      this.form.internal = String(this.form.internal)
-      this.form.hidden = String(this.form.hidden)
-
       this.formVisible = true
     },
     deleteNonProject(index, nonProject) {
@@ -323,13 +308,6 @@ export default {
       })
     },
     updateNonProject() {
-
-      // todo 改
-      this.form.articleStatus = String(this.form.articleStatus)
-      this.form.techniqueStatus = String(this.form.techniqueStatus)
-      this.form.internal = Number(this.form.internal)
-      this.form.hidden = Number(this.form.hidden)
-
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webAchievement', this.form)
             .then(res => {
