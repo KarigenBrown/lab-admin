@@ -341,9 +341,6 @@ export default {
         this.$request.get('/webProject/' + this.achievementTitle)
             .then(res => {
               this.projects = res.data
-              this.projects.forEach(value => {
-                value.status = Number(value.status)
-              })
             }).catch(err => {
           this.$message.error(err)
         })

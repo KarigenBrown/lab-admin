@@ -29,11 +29,7 @@ export default {
   name: 'Login',
   data() {
     return {
-      user: {
-        username: '123',
-        password: '256',
-        role: ''
-      },
+      user: {},
       rules: {
         username: [
           {required: true, message: '请输入用户名', trigger: 'blur'}
@@ -51,16 +47,18 @@ export default {
     login() {
       this.$refs['loginRef'].validate((valid) => {
         if (valid) {
-          this.$request.post('/login', this.user)
+          this.$request.post('/webManager/login', this.user)
               .then(res => {
-                if (res.code === '200') {
+                if (res.code === 200) {
+                  sessionStorage.setItem('token', res.data.token)
+                  sessionStorage.setItem('number', res.data.number)
                   this.$router.push('/')
-                  this.$message.success('登录成功')
-                  localStorage.setItem('user', JSON.stringify(res.data))
                 } else {
-                  this.$message.error(res.msg)
+                  this.$message.error(res.message)
                 }
-              })
+              }).then(err => {
+            this.$message.error(err)
+          })
         }
       })
     }

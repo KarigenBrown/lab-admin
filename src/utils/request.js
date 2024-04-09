@@ -7,8 +7,7 @@ const request = axios.create({
 
 request.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/json;charset=utf-8'
-    // let user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
-    // config.headers['token'] = user?.token
+    config.headers['token'] = sessionStorage.getItem('token')
     return config
 }, err => {
     this.$message.error(err)

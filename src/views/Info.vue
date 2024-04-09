@@ -81,9 +81,7 @@ export default {
     }
   },
   created() {
-    sessionStorage.setItem('userNumber', '123')
-
-    let userNumber = sessionStorage.getItem('userNumber')
+    const userNumber = sessionStorage.getItem('number')
     this.$request.get('/webMember/' + userNumber)
         .then(res => {
           this.userInfo = res.data

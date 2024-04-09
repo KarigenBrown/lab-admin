@@ -58,7 +58,7 @@ export default {
       form: {},
       formVisible: false,
       formIndex: -1,
-      permitList: ["成果管理", "人员管理", "Demo管理", "活动管理"],
+      permitList: ['成果管理', '人员管理', 'Demo管理', '活动管理'],
     }
   },
   created() {
