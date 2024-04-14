@@ -4,8 +4,20 @@
       <el-header>欢迎注册后台管理系统</el-header>
       <el-main>
         <el-form :model="user" :rules="rules" ref="registerRef">
+          <el-form-item prop="number">
+            <el-input placeholder="请输入学工号" v-model="user.number"></el-input>
+          </el-form-item>
           <el-form-item prop="username">
             <el-input placeholder="请输入用户名" v-model="user.username"></el-input>
+          </el-form-item>
+          <el-form-item prop="identity">
+            <el-select v-model="user.identity" placeholder="请选择">
+              <el-option v-for="item in ['教授', '副教授', '讲师', '在校生', '毕业生']"
+                         :key="item"
+                         :label="item"
+                         :value="item">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item prop="password">
             <el-input show-password placeholder="请输入密码" v-model="user.password"></el-input>
@@ -39,9 +51,9 @@ export default {
     }
     return {
       user: {
-        username: '123',
-        password: '111',
-        conformPassword: '112'
+        // username: '123',
+        // password: '111',
+        // conformPassword: '112'
       },
       rules: {
         username: [
@@ -61,15 +73,13 @@ export default {
       this.$refs['registerRef'].validate((valid) => {
         if (valid) {
           delete this.user.conformPassword
-          this.$request.post('/register', this.user)
+          this.$request.post('/webManager/register', this.user)
               .then(res => {
-                if (res.code === '200') {
-                  this.$router.push('/login')
-                  this.$message.success('注册成功')
-                } else {
-                  this.$message.error(res.msg)
-                }
-              })
+                this.$router.push('/login')
+                this.$message.success('注册成功')
+              }).catch(err => {
+            this.$message.error(err)
+          })
         }
       })
     }

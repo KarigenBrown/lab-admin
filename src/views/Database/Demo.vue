@@ -61,7 +61,8 @@
               :before-remove="handleRemovePhoto"
               :on-success="handleUploadPhotoSuccess"
               :on-preview="downloadPhoto"
-              :data="{'photoName': JSON.stringify(this.photoName)}">
+              :data="{'photoName': JSON.stringify(this.photoName)}"
+              :headers="{token: this.token}">
             <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
             <el-button size="small" type="success" @click="submitUploadPhoto">上传到服务器
             </el-button>
@@ -76,7 +77,8 @@
               name="videos"
               :before-remove="handleRemoveVideo"
               :on-success="handleUploadVideoSuccess"
-              :on-preview="downloadVideo">
+              :on-preview="downloadVideo"
+              :headers="{token: this.token}">
             <el-button slot="trigger" size="small" type="primary">选取视频</el-button>
             <el-button size="small" type="success" @click="submitUploadVideo">上传到服务器
             </el-button>
@@ -95,6 +97,7 @@ export default {
   name: 'Demo',
   data() {
     return {
+      token: sessionStorage.getItem('token'),
       photoList: [],
       videoList: [],
       user: JSON.parse(localStorage.getItem('user') || '{}'),

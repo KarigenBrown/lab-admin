@@ -28,7 +28,7 @@
                   @click="editUser(scope.$index, scope.row)">
                 编辑
               </el-button>
-              <el-button @click="deleteUser(scope.$index, scope.row.id)">删除</el-button>
+              <el-button @click="deleteUser(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -85,7 +85,7 @@ export default {
       form: {},
       formVisible: false,
       tableIndex: -1,
-      identities: ['教授', '副教授', '在校生', '毕业生'],
+      identities: ['教授', '副教授', '讲师', '在校生', '毕业生'],
       queryUserIdentity: '',
       choice: ''
     }
@@ -119,8 +119,8 @@ export default {
       this.formVisible = true
       this.tableIndex = index
     },
-    deleteUser(index, id) {
-      this.$request.delete('/webMember/' + id)
+    deleteUser(index, row) {
+      this.$request.delete('/webMember/' + row.id)
           .then(res => {
             this.users.splice(index, 1)
           }).catch(err => {

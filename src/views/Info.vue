@@ -41,7 +41,8 @@
             name="photo"
             :before-upload="beforeUpload"
             :on-success="uploadSuccess"
-            :data="this.names">
+            :data="this.names"
+            :headers="{token: this.token}">
           <el-button slot="trigger" size="small" type="primary">点击上传</el-button>
         </el-upload>
         <el-form-item label="联系方式" prop="contact">
@@ -73,6 +74,7 @@ export default {
   name: 'Info',
   data() {
     return {
+      token: sessionStorage.getItem('token'),
       userInfo: {},
       formVisible: false,
       form: {},

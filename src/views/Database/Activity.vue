@@ -52,7 +52,8 @@
                      :before-remove="handleRemovePhoto"
                      :on-success="handleUploadPhotoSuccess"
                      :on-preview="downloadPhoto"
-                     :data="{'photoName': JSON.stringify(this.photoName)}">
+                     :data="{'photoName': JSON.stringify(this.photoName)}"
+                     :headers="{token: this.token}">
             <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
             <el-button @click="submitUpload">上传到服务器</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
@@ -71,6 +72,7 @@ export default {
   name: 'Activity',
   data() {
     return {
+      token: sessionStorage.getItem('token'),
       photoList: [],
       user: JSON.parse(localStorage.getItem('user') || '{}'),
       date: '',
