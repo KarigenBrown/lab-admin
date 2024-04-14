@@ -169,59 +169,8 @@ export default {
     return {
       types: ['论文', '专利', '项目', '著作', '软著', '技术标准', '竞赛获奖'],
       choice: '论文',
-      projects: [
-        // {
-        //   id: 1,
-        //   name: '项目1',
-        //   link: '项目链接1',
-        //   theyear: '项目年份1',
-        //   status: 0
-        // }, {
-        //   id: 2,
-        //   name: '项目2',
-        //   link: '项目链接2',
-        //   theyear: '项目年份2',
-        //   status: 1
-        // },
-      ],
-      nonProjects: [
-        // {
-        //   id: 1,
-        //   title: 'title',
-        //   journal: 'journal',
-        //   author: 'author',
-        //   authors: 'authors',
-        //   date: '2020-01-01',
-        //   link: 'url',
-        //   papercode: 'code',
-        //   theyear: '2020',
-        //   abstract: 'abstract',
-        //   category: '论文',
-        //   initials: 'j',
-        //   internal: '1',
-        //   articleStatus: 0,
-        //   hidden: '1',
-        //   techniqueStatus: 0
-        // },
-        // {
-        //   id: 1,
-        //   title: 'title',
-        //   journal: 'journal',
-        //   author: 'author',
-        //   authors: 'authors',
-        //   date: '2020-01-01',
-        //   link: 'url',
-        //   papercode: 'code',
-        //   theyear: '2020',
-        //   abstract: 'abstract',
-        //   category: '技术标准',
-        //   initials: 'j',
-        //   internal: '1',
-        //   articleStatus: 0,
-        //   hidden: '1',
-        //   techniqueStatus: 0
-        // }
-      ],
+      projects: [],
+      nonProjects: [],
       isReloadData: true,
       formVisible: false,
       form: {},

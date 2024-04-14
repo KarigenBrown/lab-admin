@@ -50,11 +50,7 @@ export default {
       }
     }
     return {
-      user: {
-        // username: '123',
-        // password: '111',
-        // conformPassword: '112'
-      },
+      user: {},
       rules: {
         username: [
           {required: true, message: '请输入用户名', trigger: 'blur'}
