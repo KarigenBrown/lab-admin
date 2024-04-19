@@ -66,8 +66,8 @@
           </el-input>
         </el-form-item>
       </el-form>
-      <el-button @click="formVisible = false">取消</el-button>
-      <el-button @click="updateUserInfo">确定</el-button>
+      <el-button type="warning" @click="formVisible = false">取消</el-button>
+      <el-button type="success" @click="updateUserInfo">确定</el-button>
     </el-dialog>
   </div>
 </template>

@@ -5,14 +5,17 @@
         <el-button @click="addDemo">新增</el-button>
       </el-header>
       <el-main>
-        <el-table :data="demos">
+        <el-table
+            :data="demos"
+            stripe
+            border>
           <el-table-column label="id" prop="id"></el-table-column>
           <el-table-column label="标题" prop="title"></el-table-column>
           <el-table-column label="时间" prop="time"></el-table-column>
           <el-table-column label="操作">
             <template v-slot="scope">
               <el-button @click="editDemo(scope.$index, scope.row)">编辑</el-button>
-              <el-button @click="deleteDemo(scope.$index, scope.row)">删除</el-button>
+              <el-button type="danger" @click="deleteDemo(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -83,8 +86,8 @@
             <el-button size="small" type="success" @click="submitUploadVideo">上传到服务器
             </el-button>
           </el-upload>
-          <el-button @click="formVisible = false">取消</el-button>
-          <el-button @click="updateDemo">确定</el-button>
+          <el-button type="warning" @click="formVisible = false">取消</el-button>
+          <el-button type="success" @click="updateDemo">确定</el-button>
         </el-dialog>
       </el-main>
     </el-container>

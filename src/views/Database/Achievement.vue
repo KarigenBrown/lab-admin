@@ -1,27 +1,33 @@
 <template>
   <div>
     <el-container>
-      <el-header style="height: 15vh">
+      <el-header style="height: 15vh; display: flex; flex-direction: column; align-items: flex-start">
         <el-select v-model="choice" placeholder="请选择" @change="typeChange">
           <el-option v-for="item in types" :key="item" :label="item" :value="item">
           </el-option>
         </el-select>
-        <el-input
-            v-model="achievementTitle"
-            size="mini"
-            placeholder="查询成就"/>
-        <div v-if="this.choice === '论文'">
-          <el-radio v-model="articleType" label="标题">标题</el-radio>
-          <el-radio v-model="articleType" label="年份">年份</el-radio>
-          <el-radio v-model="articleType" label="期刊（首字母）">期刊（首字母）</el-radio>
-          <el-radio v-model="articleType" label="作者">作者</el-radio>
+        <div style="width: 800px; display: flex; align-items: center; justify-content: space-between">
+          <el-input
+              v-model="achievementTitle"
+              size="mini"
+              style="width: 300px"
+              placeholder="查询成就"></el-input>
+          <el-radio-group v-if="this.choice === '论文'" v-model="articleType">
+            <el-radio label="标题">标题</el-radio>
+            <el-radio label="年份">年份</el-radio>
+            <el-radio label="期刊（首字母）">期刊（首字母）</el-radio>
+            <el-radio label="作者">作者</el-radio>
+          </el-radio-group>
+          <el-button @click="queryAchievement">查询</el-button>
         </div>
-        <el-button @click="queryAchievement">查询</el-button>
         <el-button @click="addAchievement">新增</el-button>
       </el-header>
       <el-main v-if="isReloadData">
         <div v-if="choice !== '项目'">
-          <el-table :data="nonProjects">
+          <el-table
+              :data="nonProjects"
+              stripe
+              border>
             <el-table-column label="id" prop="id"></el-table-column>
             <el-table-column label="标题" prop="title"></el-table-column>
             <el-table-column label="期刊" prop="journal"></el-table-column>
@@ -36,7 +42,7 @@
             <el-table-column label="操作">
               <template v-slot="scope">
                 <el-button @click="editNonProject(scope.$index, scope.row)">编辑</el-button>
-                <el-button @click="deleteNonProject(scope.$index, scope.row)">删除</el-button>
+                <el-button type="danger" @click="deleteNonProject(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -89,6 +95,7 @@
                 <el-steps
                     :active="form.articleStatus"
                     finish-status="success">
+                  <el-step title="开题"></el-step>
                   <el-step title="草稿"></el-step>
                   <el-step title="已发布"></el-step>
                 </el-steps>
@@ -98,6 +105,7 @@
                             label="技术标准状态"
                             prop="techniqueStatus">
                 <el-steps :active="form.techniqueStatus" finish-status="success">
+                  <el-step title="开题"></el-step>
                   <el-step title="申请中"></el-step>
                   <el-step title="已授权"></el-step>
                 </el-steps>
@@ -110,20 +118,23 @@
                 </el-radio-group>
               </el-form-item>
             </el-form>
-            <el-button @click="formVisible = false">取消</el-button>
-            <el-button @click="updateNonProject">确定</el-button>
+            <el-button type="warning" @click="formVisible = false">取消</el-button>
+            <el-button type="success" @click="updateNonProject">确定</el-button>
           </el-dialog>
         </div>
 
         <div v-if="choice === '项目'">
-          <el-table :data="projects">
+          <el-table
+              :data="projects"
+              stripe
+              border>
             <el-table-column label="id" prop="id"></el-table-column>
             <el-table-column label="项目名称" prop="name"></el-table-column>
             <el-table-column label="项目年份" prop="theyear"></el-table-column>
             <el-table-column label="操作">
               <template v-slot="scope">
                 <el-button @click="editProject(scope.$index, scope.row)">编辑</el-button>
-                <el-button @click="deleteProject(scope.$index, scope.row)">删除</el-button>
+                <el-button type="danger" @click="deleteProject(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -148,6 +159,7 @@
               </el-form-item>
               <el-form-item label="项目状态" prop="status">
                 <el-steps :active="form.status" finish-status="success">
+                  <el-step title="开题"></el-step>
                   <el-step title="在研"></el-step>
                   <el-step title="结题"></el-step>
                 </el-steps>
@@ -319,13 +331,14 @@ export default {
       this.formVisible = false
     },
     nextStatus() {
-      if (this.form.category === '论文' && this.form.articleStatus < 2) {
+      if (this.form.category === '论文' && this.form.articleStatus < 3) {
         this.form.articleStatus++
-      } else if (this.form.category === '技术标准' && this.form.techniqueStatus < 2) {
+      } else if (this.form.category === '技术标准' && this.form.techniqueStatus < 3) {
         this.form.techniqueStatus++
-      } else if (this.choice === '项目' && this.form.status < 2) {
+      } else if (this.choice === '项目' && this.form.status < 3) {
         this.form.status++
       }
+      this.$forceUpdate()
     },
     queryAchievement() {
       if (this.choice === '项目') {
@@ -367,9 +380,9 @@ export default {
       this.tableIndex = -1
       this.form = {}
       this.form.category = this.choice
-      this.form.status = 1
-      this.form.articleStatus = 1
-      this.form.techniqueStatus = 1
+      this.form.status = 0
+      this.form.articleStatus = 0
+      this.form.techniqueStatus = 0
       this.formVisible = true
     }
   }

@@ -44,7 +44,7 @@
         {{ userInfo.introduction }}
         <el-checkbox v-model="userInfoHidden.introduction">隐藏</el-checkbox>
       </el-form-item>
-      <el-button @click="updateHiddenFields">确定</el-button>
+      <el-button type="success" @click="updateHiddenFields">确定</el-button>
     </el-form>
   </div>
 </template>

@@ -1,23 +1,29 @@
 <template>
   <div>
     <el-container>
-      <el-header>
-        <el-input
-            v-model="queryActivityTitle"
-            size="mini"
-            placeholder="查询活动"/>
-        <el-button @click="queryActivity">查询</el-button>
+      <el-header style="display: flex; flex-direction: column; align-items: flex-start">
+        <div style="width: 270px ;display: flex; align-items: center; justify-content: space-between">
+          <el-input
+              v-model="queryActivityTitle"
+              size="mini"
+              style="width: 200px"
+              placeholder="查询活动"/>
+          <el-button @click="queryActivity">查询</el-button>
+        </div>
         <el-button @click="addActivity">新增</el-button>
       </el-header>
       <el-main>
-        <el-table :data="activities">
+        <el-table
+            :data="activities"
+            stripe
+            border>
           <el-table-column label="id" prop="id"></el-table-column>
           <el-table-column label="标题" prop="title"></el-table-column>
           <el-table-column label="时间" prop="date"></el-table-column>
           <el-table-column label="操作">
             <template v-slot="scope">
               <el-button @click="editActivity(scope.$index, scope.row)">编辑</el-button>
-              <el-button @click="deleteActivity(scope.$index, scope.row)">删除</el-button>
+              <el-button type="danger" @click="deleteActivity(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -55,11 +61,11 @@
                      :data="{'photoName': JSON.stringify(this.photoName)}"
                      :headers="{token: this.token}">
             <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-            <el-button @click="submitUpload">上传到服务器</el-button>
+            <el-button type="success" @click="submitUpload">上传到服务器</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
-          <el-button @click="formVisible = false">取消</el-button>
-          <el-button @click="updateActivity">确定</el-button>
+          <el-button type="warning" @click="formVisible = false">取消</el-button>
+          <el-button type="success" @click="updateActivity">确定</el-button>
         </el-dialog>
       </el-main>
     </el-container>

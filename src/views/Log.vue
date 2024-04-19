@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-table :data="logs">
+    <el-table
+        :data="logs"
+        stripe
+        border>
       <el-table-column label="id" prop="id"></el-table-column>
       <el-table-column label="userid" prop="userid"></el-table-column>
       <el-table-column label="createTime" prop="createTime"></el-table-column>

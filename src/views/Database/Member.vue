@@ -12,11 +12,14 @@
                      :value="item">
           </el-option>
         </el-select>
-<!--        <el-button @click="addUser">新增</el-button>-->
+        <!--<el-button @click="addUser">新增</el-button>-->
       </el-header>
 
       <el-main>
-        <el-table :data="users">
+        <el-table
+            :data="users"
+            stripe
+            border>
           <el-table-column label="id" prop="id"></el-table-column>
           <el-table-column label="学工号" prop="number"></el-table-column>
           <el-table-column label="用户名" prop="name"></el-table-column>
@@ -28,7 +31,7 @@
                   @click="editUser(scope.$index, scope.row)">
                 编辑
               </el-button>
-              <el-button @click="deleteUser(scope.$index, scope.row)">删除</el-button>
+              <el-button type="danger" @click="deleteUser(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -68,8 +71,8 @@
               </el-form-item>
             </div>
           </el-form>
-          <el-button @click="formVisible = false">取消</el-button>
-          <el-button @click="updateUser">确定</el-button>
+          <el-button type="warning" @click="formVisible = false">取消</el-button>
+          <el-button type="success" @click="updateUser">确定</el-button>
         </el-dialog>
       </el-main>
     </el-container>

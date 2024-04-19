@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-table :data="users">
+    <el-table
+        :data="users"
+        stripe
+        border>
       <el-table-column label="id" prop="id"></el-table-column>
       <el-table-column label="学工号" prop="number"></el-table-column>
       <el-table-column label="用户名" prop="username"></el-table-column>
@@ -14,7 +17,7 @@
       <el-table-column label="操作">
         <template v-slot="scope">
           <el-button @click="editUser(scope.$index, scope.row)">编辑</el-button>
-          <el-button @click="deleteUser(scope.$index, scope.row.id)">删除</el-button>
+          <el-button type="danger" @click="deleteUser(scope.$index, scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
       <el-table-column>
@@ -42,8 +45,8 @@
           </el-checkbox-group>
         </el-form-item>
       </el-form>
-      <el-button @click="formVisible = false">取消</el-button>
-      <el-button @click="updateUser">确定</el-button>
+      <el-button type="warning" @click="formVisible = false">取消</el-button>
+      <el-button type="success" @click="updateUser">确定</el-button>
     </el-dialog>
 
   </div>

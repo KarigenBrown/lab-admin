@@ -14,7 +14,7 @@
                 text-color="#fff"
                 active-text-color="#fff">
               <div v-if="this.role === 'admin'">
-                <el-menu-item index="/permit">人员管理</el-menu-item>
+                <el-menu-item index="/permit">权限管理</el-menu-item>
                 <el-submenu index="0">
                   <div slot="title">
                     <span>数据库管理</span>
@@ -47,9 +47,9 @@
         </el-container>
       </el-aside>
       <!--页面主体-->
-      <el-container>
+      <el-container style="background-color: white">
         <!--头部区域-->
-        <el-header style="background-color: #4c8dbd; color: #fff">
+        <el-header style="background-color: #4c8dbd; color: #fff;">
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item style="color: white">主页</el-breadcrumb-item>
             <el-breadcrumb-item style="color: white">{{ $route.meta.name }}</el-breadcrumb-item>
@@ -142,6 +142,10 @@ export default {
 
 #logout {
   padding: 5px 15px;
+}
+
+.el-breadcrumb__inner {
+  color: white !important;
 }
 
 </style>
