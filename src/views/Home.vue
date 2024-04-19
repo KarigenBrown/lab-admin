@@ -1,13 +1,18 @@
 <template>
-  <div>
+  <div id="root">
     <!--页面整体布局-->
     <el-container>
       <!--侧边栏-->
       <el-aside>
         <el-container>
-          <el-header>实验室管理系统</el-header>
+          <el-header style="background-color: #437ca6;color: #fff">实验室管理系统</el-header>
           <el-main>
-            <el-menu router :default-active="$route.path">
+            <el-menu
+                router
+                :default-active="$route.path"
+                background-color="#314050"
+                text-color="#fff"
+                active-text-color="#fff">
               <div v-if="this.role === 'admin'">
                 <el-menu-item index="/permit">人员管理</el-menu-item>
                 <el-submenu index="0">
@@ -44,12 +49,12 @@
       <!--页面主体-->
       <el-container>
         <!--头部区域-->
-        <el-header>
+        <el-header style="background-color: #4c8dbd; color: #fff">
           <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item>主页</el-breadcrumb-item>
-            <el-breadcrumb-item>{{ $route.meta.name }}</el-breadcrumb-item>
+            <el-breadcrumb-item style="color: white">主页</el-breadcrumb-item>
+            <el-breadcrumb-item style="color: white">{{ $route.meta.name }}</el-breadcrumb-item>
           </el-breadcrumb>
-          <el-button @click="logout">
+          <el-button id="logout" size="small" type="danger" @click="logout">
             退出
           </el-button>
         </el-header>
@@ -101,3 +106,42 @@ export default {
   }
 }
 </script>
+
+<style>
+#root {
+  height: 100vh;
+  background-color: #fff;
+}
+
+.el-aside {
+  width: 200px;
+  background-color: #314050
+}
+
+.el-aside .el-header {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.el-container {
+  height: 100%;
+}
+
+.el-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.el-breadcrumb {
+  font-size: 16px;
+  background-color: #4c8dbd;
+}
+
+#logout {
+  padding: 5px 15px;
+}
+
+</style>
