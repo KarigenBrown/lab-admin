@@ -114,10 +114,14 @@ export default {
   created() {
     this.$request.get('/webDemo/all')
         .then(res => {
-          res.data.forEach(demo => {
-            demo.time = demo.time.substring(0, 10)
-          })
-          this.demos = res.data
+          if (res.code === 200) {
+            res.data.forEach(demo => {
+              demo.time = demo.time.substring(0, 10)
+            })
+            this.demos = res.data
+          } else {
+            this.$message.error(res.message)
+          }
         }).catch(err => {
       this.$message.error(err)
     })
@@ -126,7 +130,12 @@ export default {
     deleteDemo(index, demo) {
       this.$request.delete('/webDemo/' + demo.id)
           .then(res => {
-            this.demos.splice(index, 1)
+            if (res.code === 200) {
+              this.demos.splice(index, 1)
+              this.$message.success('删除Demo成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -242,16 +251,26 @@ export default {
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webDemo', this.form)
             .then(res => {
-              this.form.id = res.data.id
-              this.demos.push(this.form)
-              this.$set(this.demos, this.demos.length - 1, this.form)
+              if (res.code === 200) {
+                this.form.id = res.data.id
+                this.demos.push(this.form)
+                this.$set(this.demos, this.demos.length - 1, this.form)
+                this.$message.success('新增Demo成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
       } else { // 修改
         this.$request.put('/webDemo', this.form)
             .then(res => {
-              this.$set(this.demos, this.tableIndex, this.form)
+              if (res.code === 200) {
+                this.$set(this.demos, this.tableIndex, this.form)
+                this.$message.success('修改Demo成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })

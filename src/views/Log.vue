@@ -19,7 +19,11 @@ export default {
   created() {
     this.$request.get('/webLog/all')
         .then(res => {
-          this.logs = res.data
+          if (res.code === 200) {
+            this.logs = res.data
+          } else {
+            this.$message.error(res.message)
+          }
         }).catch(err => {
       this.$message.error(err)
     })

@@ -12,7 +12,7 @@
                      :value="item">
           </el-option>
         </el-select>
-        <el-button @click="addUser">新增</el-button>
+<!--        <el-button @click="addUser">新增</el-button>-->
       </el-header>
 
       <el-main>
@@ -93,15 +93,25 @@ export default {
   created() {
     this.$request.get('/webMember/all')
         .then(res => {
-          this.users = res.data
-        })
+          if (res.code === 200) {
+            this.users = res.data
+          } else {
+            this.$message.error(res.message)
+          }
+        }).catch(err => {
+      this.$message.error(err)
+    })
   },
   methods: {
     queryUserByName() {
       this.choice = ''
       this.$request.get('/webMember/name/' + this.queryUsername)
           .then(res => {
-            this.users = res.data
+            if (res.code === 200) {
+              this.users = res.data
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -109,7 +119,11 @@ export default {
     identityChange() {
       this.$request.get('/webMember/identity/' + this.choice)
           .then(res => {
-            this.users = res.data
+            if (res.code === 200) {
+              this.users = res.data
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -122,7 +136,12 @@ export default {
     deleteUser(index, row) {
       this.$request.delete('/webMember/' + row.id)
           .then(res => {
-            this.users.splice(index, 1)
+            if (res.code === 200) {
+              this.users.splice(index, 1)
+              this.$message.success('删除用户成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -137,17 +156,27 @@ export default {
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webMember', this.form)
             .then(res => {
-              this.form.id = res.data.id
-              this.users.push(this.form)
-              this.$set(this.users, this.users.length - 1, this.form)
+              if (res.code === 200) {
+                this.form.id = res.data.id
+                this.users.push(this.form)
+                this.$set(this.users, this.users.length - 1, this.form)
+                this.$message.success('新增用户成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
       } else { // 修改
         this.$request.put('/webMember', this.form)
             .then(res => {
-              this.formVisible = false
-              this.$set(this.users, this.tableIndex, this.form)
+              if (res.code === 200) {
+                this.formVisible = false
+                this.$set(this.users, this.tableIndex, this.form)
+                this.$message.success('修改用户成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })

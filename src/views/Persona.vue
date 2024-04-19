@@ -61,11 +61,15 @@ export default {
     const userNumber = sessionStorage.getItem('number')
     this.$request.get('/webMember/' + userNumber)
         .then(res => {
-          this.userInfo = res.data
-          this.userInfo.hiddenFields = this.userInfo.hiddenFields === '' ? [] : this.userInfo.hiddenFields.split(',')
-          this.userInfoHidden = JSON.parse(JSON.stringify(this.userInfo))
-          Object.keys(this.userInfoHidden).forEach(key => this.userInfoHidden[key] = false)
-          this.userInfo.hiddenFields.forEach(field => this.userInfoHidden[field] = true)
+          if (res.code === 200) {
+            this.userInfo = res.data
+            this.userInfo.hiddenFields = this.userInfo.hiddenFields === '' ? [] : this.userInfo.hiddenFields.split(',')
+            this.userInfoHidden = JSON.parse(JSON.stringify(this.userInfo))
+            Object.keys(this.userInfoHidden).forEach(key => this.userInfoHidden[key] = false)
+            this.userInfo.hiddenFields.forEach(field => this.userInfoHidden[field] = true)
+          } else {
+            this.$message.error(res.message)
+          }
         }).catch(err => {
       this.$message.error(err)
     })
@@ -81,7 +85,11 @@ export default {
       this.userInfo.hiddenFields = hiddenFields.join(',')
       this.$request.put('/webMember', this.userInfo)
           .then(res => {
-            this.$message.success('修改成功')
+            if (res.code === 200) {
+              this.$message.success('修改隐藏字段成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })

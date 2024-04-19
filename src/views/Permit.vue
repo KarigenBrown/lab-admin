@@ -64,10 +64,14 @@ export default {
   created() {
     this.$request.get('/webManager/all')
         .then(res => {
-          this.users = res.data
-          this.users.forEach(user => {
-            user.permits = user.permits.split(',')
-          })
+          if (res.code === 200) {
+            this.users = res.data
+            this.users.forEach(user => {
+              user.permits = user.permits.split(',')
+            })
+          } else {
+            this.$message.error(res.message)
+          }
         }).catch(err => {
       this.$message.error(err)
     })
@@ -76,8 +80,12 @@ export default {
     deleteUser(index, id) {
       this.$request.delete('/webManager/' + id)
           .then(res => {
-            this.users.splice(index, 1)
-            this.$message.success('修改成功')
+            if (res.code === 200) {
+              this.users.splice(index, 1)
+              this.$message.success('删除用户成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -85,10 +93,14 @@ export default {
     query() {
       this.$request.get('/webManager/' + this.queryUsername)
           .then(res => {
-            this.users = res.data
-            this.users.forEach(user => {
-              user.permits = user.permits.split(',')
-            })
+            if (res.code === 200) {
+              this.users = res.data
+              this.users.forEach(user => {
+                user.permits = user.permits.split(',')
+              })
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -102,10 +114,14 @@ export default {
       this.form.permits = this.form.permits.join(',')
       this.$request.put('/webManager', this.form)
           .then(res => {
-            this.formVisible = false
-            this.form.permits = this.form.permits.split(',')
-            this.$set(this.users, this.formIndex, this.form)
-            this.$message.success('修改成功')
+            if (res.code === 200) {
+              this.formVisible = false
+              this.form.permits = this.form.permits.split(',')
+              this.$set(this.users, this.formIndex, this.form)
+              this.$message.success('修改用户成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })

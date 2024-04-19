@@ -88,10 +88,14 @@ export default {
   created() {
     this.$request.get('/webActivity/all')
         .then(res => {
-          res.data.forEach(activity => {
-            activity.date = activity.date.substring(0, 10)
-          })
-          this.activities = res.data
+          if (res.code === 200) {
+            res.data.forEach(activity => {
+              activity.date = activity.date.substring(0, 10)
+            })
+            this.activities = res.data
+          } else {
+            this.$message.error(res.message)
+          }
         }).catch(err => {
       this.$message.error(err)
     })
@@ -100,7 +104,11 @@ export default {
     queryActivity() {
       this.$request.get('/webActivity/' + this.queryActivityTitle)
           .then(res => {
-            this.activities = res.data
+            if (res.code === 200) {
+              this.activities = res.data
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -108,7 +116,12 @@ export default {
     deleteActivity(index, activity) {
       this.$request.delete('/webActivity/' + activity.id)
           .then(res => {
-            this.activities.splice(index, 1)
+            if (res.code === 200) {
+              this.activities.splice(index, 1)
+              this.$message.success('删除活动成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -184,16 +197,26 @@ export default {
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webActivity', this.form)
             .then(res => {
-              this.form.id = res.data.id
-              this.activities.push(this.form)
-              this.$set(this.activities, this.activities.length - 1, this.form)
+              if (res.code === 200) {
+                this.form.id = res.data.id
+                this.activities.push(this.form)
+                this.$set(this.activities, this.activities.length - 1, this.form)
+                this.$message.success('新增活动成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
       } else { // 修改
         this.$request.put('/webActivity', this.form)
             .then(res => {
-              this.$set(this.activities, this.tableIndex, this.form)
+              if (res.code === 200) {
+                this.$set(this.activities, this.tableIndex, this.form)
+                this.$message.success('修改活动成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })

@@ -71,8 +71,12 @@ export default {
           delete this.user.conformPassword
           this.$request.post('/webManager/register', this.user)
               .then(res => {
-                this.$router.push('/login')
-                this.$message.success('注册成功')
+                if (res.code === 200) {
+                  this.$router.push('/login')
+                  this.$message.success('注册成功')
+                } else {
+                  this.$message.error(res.message)
+                }
               }).catch(err => {
             this.$message.error(err)
           })

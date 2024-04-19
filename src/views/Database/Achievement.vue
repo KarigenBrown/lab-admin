@@ -182,7 +182,11 @@ export default {
   created() {
     this.$request.get(`/webAchievement/${this.choice}/all`)
         .then(res => {
-          this.nonProjects = res.data
+          if (res.code === 200) {
+            this.nonProjects = res.data
+          } else {
+            this.$message.error(res.message)
+          }
         }).catch(err => {
       this.$message.error(err)
     })
@@ -192,14 +196,22 @@ export default {
       if (this.choice !== '项目') {
         this.$request.get(`/webAchievement/${this.choice}/all`)
             .then(res => {
-              this.nonProjects = res.data
+              if (res.code === 200) {
+                this.nonProjects = res.data
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
       } else {
         this.$request.get('/webProject/all')
             .then(res => {
-              this.projects = res.data
+              if (res.code === 200) {
+                this.projects = res.data
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
@@ -218,7 +230,12 @@ export default {
     deleteProject(index, project) {
       this.$request.delete('/webProject/' + project.id)
           .then(res => {
-            this.projects.splice(index, 1)
+            if (res.code === 200) {
+              this.projects.splice(index, 1)
+              this.$message.success('删除' + this.choice + '成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -227,16 +244,26 @@ export default {
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webProject', this.form)
             .then(res => {
-              this.form.id = res.data.id
-              this.projects.push(this.form)
-              this.$set(this.projects, this.projects.length - 1, this.form)
+              if (res.code === 200) {
+                this.form.id = res.data.id
+                this.projects.push(this.form)
+                this.$set(this.projects, this.projects.length - 1, this.form)
+                this.$message.success('新增' + this.choice + '成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
       } else { // 修改
         this.$request.put('/webProject', this.form)
             .then(res => {
-              this.$set(this.projects, this.tableIndex, this.form)
+              if (res.code === 200) {
+                this.$set(this.projects, this.tableIndex, this.form)
+                this.$message.success('修改' + this.choice + '成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
@@ -251,7 +278,12 @@ export default {
     deleteNonProject(index, nonProject) {
       this.$request.delete('/webAchievement/' + nonProject.id)
           .then(res => {
-            this.nonProjects.splice(index, 1)
+            if (res.code === 200) {
+              this.nonProjects.splice(index, 1)
+              this.$message.success('删除' + this.choice + '成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
@@ -260,16 +292,26 @@ export default {
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webAchievement', this.form)
             .then(res => {
-              this.form.id = res.data.id
-              this.nonProjects.push(this.form)
-              this.$set(this.nonProjects, this.nonProjects.length - 1, this.form)
+              if (res.code === 200) {
+                this.form.id = res.data.id
+                this.nonProjects.push(this.form)
+                this.$set(this.nonProjects, this.nonProjects.length - 1, this.form)
+                this.$message.success('新增' + this.choice + '成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
       } else { // 修改
         this.$request.put('/webAchievement', this.form)
             .then(res => {
-              this.$set(this.nonProjects, this.tableIndex, this.form)
+              if (res.code === 200) {
+                this.$set(this.nonProjects, this.tableIndex, this.form)
+                this.$message.success('修改' + this.choice + '成功')
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
@@ -289,21 +331,33 @@ export default {
       if (this.choice === '项目') {
         this.$request.get('/webProject/' + this.achievementTitle)
             .then(res => {
-              this.projects = res.data
+              if (res.code === 200) {
+                this.projects = res.data
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
       } else if (this.choice === '论文') {
         this.$request.get(`/webAchievement/${this.choice}/type/${this.articleType}/${this.achievementTitle}`)
             .then(res => {
-              this.nonProjects = res.data
+              if (res.code === 200) {
+                this.nonProjects = res.data
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })
       } else {
         this.$request.get(`/webAchievement/${this.choice}/${this.achievementTitle}`)
             .then(res => {
-              this.nonProjects = res.data
+              if (res.code === 200) {
+                this.nonProjects = res.data
+              } else {
+                this.$message.error(res.message)
+              }
             }).catch(err => {
           this.$message.error(err)
         })

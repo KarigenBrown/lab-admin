@@ -87,8 +87,13 @@ export default {
     logout() {
       this.$request.delete('/webManager/logout')
           .then(res => {
-            sessionStorage.clear()
-            this.$router.push('/login')
+            if (res.code === 200) {
+              sessionStorage.clear()
+              this.$router.push('/login')
+              this.$message.success('退出成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })

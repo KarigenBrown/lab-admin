@@ -43,7 +43,9 @@
             :on-success="uploadSuccess"
             :data="this.names"
             :headers="{token: this.token}">
-          <el-button slot="trigger" size="small" type="primary">点击上传</el-button>
+          <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+          <el-button size="small" type="success" @click="submitUpload">上传到服务器
+          </el-button>
         </el-upload>
         <el-form-item label="联系方式" prop="contact">
           <el-input v-model="form.contact">{{ form.contact }}</el-input>
@@ -86,10 +88,14 @@ export default {
     const userNumber = sessionStorage.getItem('number')
     this.$request.get('/webMember/' + userNumber)
         .then(res => {
-          this.userInfo = res.data
-          const photoUrl = this.userInfo.photoUrl
-          const fileName = photoUrl.substring(photoUrl.lastIndexOf('/'))
-          this.photoList.push({url: photoUrl, name: fileName})
+          if (res.code === 200) {
+            this.userInfo = res.data
+            const photoUrl = this.userInfo.photoUrl
+            const fileName = photoUrl.substring(photoUrl.lastIndexOf('/'))
+            this.photoList.push({url: photoUrl, name: fileName})
+          } else {
+            this.$message.error(res.message)
+          }
         }).catch(err => {
       this.$message.error(err)
     })
@@ -104,19 +110,26 @@ export default {
       this.names.photoName = this.form.number + extendFileName
     },
     uploadSuccess(response, file, fileList) {
-      this.formVisible = false
       this.form.photoUrl = response.data.photoUrl
+      this.$message.success('图片上传成功')
+    },
+    submitUpload() {
+      this.$refs.photo.submit();
+    },
+    updateUserInfo() {
+      this.formVisible = false
       this.$request.put('/webMember', this.form)
           .then(res => {
-            this.userInfo = this.form
-            this.userInfo.photoUrl += '?_=' + new Date().getTime()
-            this.$message.success('修改成功')
+            if (res.code === 200) {
+              this.userInfo = this.form
+              this.userInfo.photoUrl += '?_=' + new Date().getTime()
+              this.$message.success('修改个人信息成功')
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(err => {
         this.$message.error(err)
       })
-    },
-    updateUserInfo() {
-      this.$refs.photo.submit()
     },
   }
 }
