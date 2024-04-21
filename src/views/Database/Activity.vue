@@ -1,6 +1,8 @@
 <template>
   <div>
     <el-container>
+      <el-page-header @back="goBack" content="活动详情">
+      </el-page-header>
       <el-header style="display: flex; flex-direction: column; align-items: flex-start">
         <div style="width: 270px ;display: flex; align-items: center; justify-content: space-between">
           <el-input
@@ -27,6 +29,12 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination v-if="!this.pageHide"
+                       layout="prev, pager, next,total"
+                       :total="total"
+                       :page-size="pageSize"
+                       :current-page="currentPage"
+                       @current-change="currentChange"></el-pagination>
 
         <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
           <el-form :model="form">
@@ -89,16 +97,21 @@ export default {
       form: {},
       queryActivityTitle: '',
       photoName: {},
+      total: 0,
+      pageSize: 10,
+      currentPage: 1,
+      pageHide: false
     };
   },
   created() {
-    this.$request.get('/webActivity/all')
+    this.$request.get(`/webActivity/all/${this.pageSize}/${this.currentPage}`)
         .then(res => {
           if (res.code === 200) {
-            res.data.forEach(activity => {
+            res.data.rows.forEach(activity => {
               activity.date = activity.date.substring(0, 10)
             })
-            this.activities = res.data
+            this.activities = res.data.rows
+            this.total = res.data.total
           } else {
             this.$message.error(res.message)
           }
@@ -112,6 +125,7 @@ export default {
           .then(res => {
             if (res.code === 200) {
               this.activities = res.data
+              this.pageHide = true
             } else {
               this.$message.error(res.message)
             }
@@ -229,6 +243,29 @@ export default {
       }
       this.form.date = this.form.date.substring(0, 10)
     },
+    currentChange(currentPage) {
+      this.currentPage = currentPage
+      this.$request.get(`/webActivity/all/${this.pageSize}/${this.currentPage}`)
+          .then(res => {
+            if (res.code === 200) {
+              res.data.rows.forEach(activity => {
+                activity.date = activity.date.substring(0, 10)
+              })
+              this.activities = res.data.rows
+              this.total = res.data.total
+            } else {
+              this.$message.error(res.message)
+            }
+          }).catch(err => {
+        this.$message.error(err)
+      })
+    },
+    goBack() {
+      this.currentPage = 1
+      this.currentChange(this.currentPage)
+      this.pageHide = false
+      this.queryActivityTitle = ''
+    }
   }
 }
 </script>

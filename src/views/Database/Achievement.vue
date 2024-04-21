@@ -1,12 +1,14 @@
 <template>
   <div>
     <el-container>
+      <el-page-header @back="goBack" content="成就详情">
+      </el-page-header>
       <el-header style="height: 15vh; display: flex; flex-direction: column; align-items: flex-start">
         <el-select v-model="choice" placeholder="请选择" @change="typeChange">
           <el-option v-for="item in types" :key="item" :label="item" :value="item">
           </el-option>
         </el-select>
-        <div style="width: 800px; display: flex; align-items: center; justify-content: space-between">
+        <div style="display: flex; align-items: center; justify-content: space-between">
           <el-input
               v-model="achievementTitle"
               size="mini"
@@ -46,6 +48,12 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination v-if="!this.pageHide"
+                         layout="prev, pager, next,total"
+                         :total="total"
+                         :page-size="pageSize"
+                         :current-page="currentPage"
+                         @current-change="currentChange"></el-pagination>
 
           <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
             <el-form :model="form">
@@ -59,13 +67,13 @@
               <el-form-item label="期刊" prop="journal">
                 <el-input v-model="form.journal" placeholder="期刊"></el-input>
               </el-form-item>
-              <el-form-item label="第一作者" prop="author">
+              <el-form-item v-if="form.category !== '竞赛获奖'" label="第一作者" prop="author">
                 <el-input v-model="form.author" placeholder="第一作者"></el-input>
               </el-form-item>
-              <el-form-item label="其他作者" prop="authors">
+              <el-form-item v-if="form.category !== '竞赛获奖'" label="其他作者" prop="authors">
                 <el-input v-model="form.authors" placeholder="其他作者"></el-input>
               </el-form-item>
-              <el-form-item label="论文年份" prop="theyear">
+              <el-form-item v-if="form.category === '论文'" label="论文年份" prop="theyear">
                 <el-input v-model="form.theyear" placeholder="论文年份"></el-input>
               </el-form-item>
               <el-form-item label="详情页链接" prop="link">
@@ -78,7 +86,7 @@
                 <el-input v-model="form.abstract" placeholder="摘要"></el-input>
               </el-form-item>
               <el-form-item label="类别" prop="category">{{ form.category }}</el-form-item>
-              <el-form-item label="论文首字母" prop="initials">
+              <el-form-item v-if="form.category === '论文'" label="论文首字母" prop="initials">
                 <el-input v-model="form.initials" placeholder="论文首字母"></el-input>
               </el-form-item>
               <el-form-item v-if="form.category === '论文'"
@@ -138,6 +146,12 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination v-if="!this.pageHide"
+                         layout="prev, pager, next,total"
+                         :total="total"
+                         :page-size="pageSize"
+                         :current-page="currentPage"
+                         @current-change="currentChange"></el-pagination>
 
           <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
             <el-form :model="form">
@@ -189,13 +203,18 @@ export default {
       achievementTitle: '',
       articleType: '标题',
       tableIndex: -1,
+      total: 0,
+      pageSize: 10,
+      currentPage: 1,
+      pageHide: false
     }
   },
   created() {
-    this.$request.get(`/webAchievement/${this.choice}/all`)
+    this.$request.get(`/webAchievement/${this.choice}/all/${this.pageSize}/${this.currentPage}`)
         .then(res => {
           if (res.code === 200) {
-            this.nonProjects = res.data
+            this.nonProjects = res.data.rows
+            this.total = res.data.total
           } else {
             this.$message.error(res.message)
           }
@@ -206,10 +225,11 @@ export default {
   methods: {
     typeChange() {
       if (this.choice !== '项目') {
-        this.$request.get(`/webAchievement/${this.choice}/all`)
+        this.$request.get(`/webAchievement/${this.choice}/all/${this.pageSize}/${this.currentPage}`)
             .then(res => {
               if (res.code === 200) {
-                this.nonProjects = res.data
+                this.nonProjects = res.data.rows
+                this.total = res.data.total
               } else {
                 this.$message.error(res.message)
               }
@@ -217,10 +237,11 @@ export default {
           this.$message.error(err)
         })
       } else {
-        this.$request.get('/webProject/all')
+        this.$request.get(`/webProject/all/${this.pageSize}/${this.currentPage}`)
             .then(res => {
               if (res.code === 200) {
-                this.projects = res.data
+                this.projects = res.data.rows
+                this.total = res.data.total
               } else {
                 this.$message.error(res.message)
               }
@@ -346,6 +367,7 @@ export default {
             .then(res => {
               if (res.code === 200) {
                 this.projects = res.data
+                this.pageHide = true
               } else {
                 this.$message.error(res.message)
               }
@@ -357,6 +379,7 @@ export default {
             .then(res => {
               if (res.code === 200) {
                 this.nonProjects = res.data
+                this.pageHide = true
               } else {
                 this.$message.error(res.message)
               }
@@ -368,6 +391,7 @@ export default {
             .then(res => {
               if (res.code === 200) {
                 this.nonProjects = res.data
+                this.pageHide = true
               } else {
                 this.$message.error(res.message)
               }
@@ -384,6 +408,42 @@ export default {
       this.form.articleStatus = 0
       this.form.techniqueStatus = 0
       this.formVisible = true
+    },
+    currentChange(currentPage) {
+      this.currentPage = currentPage
+      if (this.choice !== '项目') {
+        this.$request.get(`/webAchievement/${this.choice}/all/${this.pageSize}/${this.currentPage}`)
+            .then(res => {
+              if (res.code === 200) {
+                this.nonProjects = res.data.rows
+                this.total = res.data.total
+              } else {
+                this.$message.error(res.message)
+              }
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      } else {
+        this.$request.get(`/webProject/all/${this.pageSize}/${this.currentPage}`)
+            .then(res => {
+              if (res.code === 200) {
+                this.projects = res.data.rows
+                this.total = res.data.total
+              } else {
+                this.$message.error(res.message)
+              }
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      }
+    },
+    goBack() {
+      this.currentPage = 1
+      this.choice = '论文'
+      this.achievementTitle = ''
+      this.articleType = '标题'
+      this.currentChange(this.currentPage)
+      this.pageHide = false
     }
   }
 }

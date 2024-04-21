@@ -1,7 +1,17 @@
 <template>
   <div>
     <el-container>
-      <el-header>
+      <el-page-header @back="goBack" content="Demo详情">
+      </el-page-header>
+      <el-header style="display: flex; flex-direction: column; align-items: flex-start">
+        <div style="width: 270px ;display: flex; align-items: center; justify-content: space-between">
+          <el-input
+              v-model="queryDemoTitle"
+              size="mini"
+              style="width: 200px"
+              placeholder="查询活动"/>
+          <el-button @click="queryDemo">查询</el-button>
+        </div>
         <el-button @click="addDemo">新增</el-button>
       </el-header>
       <el-main>
@@ -19,6 +29,12 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination v-if="!this.pageHide"
+                       layout="prev, pager, next,total"
+                       :total="total"
+                       :page-size="pageSize"
+                       :current-page="currentPage"
+                       @current-change="currentChange"></el-pagination>
 
         <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
           <el-form :model="form">
@@ -111,17 +127,23 @@ export default {
       photoName: {},
       tableIndex: -1,
       form: {},
-      newTag: ''
+      newTag: '',
+      queryDemoTitle: '',
+      total: 0,
+      pageSize: 10,
+      currentPage: 1,
+      pageHide: false
     };
   },
   created() {
-    this.$request.get('/webDemo/all')
+    this.$request.get(`/webDemo/all/${this.pageSize}/${this.currentPage}`)
         .then(res => {
           if (res.code === 200) {
-            res.data.forEach(demo => {
+            res.data.rows.forEach(demo => {
               demo.time = demo.time.substring(0, 10)
             })
-            this.demos = res.data
+            this.demos = res.data.rows
+            this.total = res.data.total
           } else {
             this.$message.error(res.message)
           }
@@ -130,6 +152,22 @@ export default {
     })
   },
   methods: {
+    queryDemo() {
+      this.$request.get('/webDemo/' + this.queryDemoTitle)
+          .then(res => {
+            if (res.code === 200) {
+              res.data.forEach(demo => {
+                demo.time = demo.time.substring(0, 10)
+              })
+              this.demos = res.data
+              this.pageHide = true
+            } else {
+              this.$message.error(res.message)
+            }
+          }).catch(err => {
+        this.$message.error(err)
+      })
+    },
     deleteDemo(index, demo) {
       this.$request.delete('/webDemo/' + demo.id)
           .then(res => {
@@ -290,6 +328,29 @@ export default {
       this.videoList = []
       this.formVisible = true
     },
+    currentChange(currentPage) {
+      this.currentPage = currentPage
+      this.$request.get(`/webDemo/all/${this.pageSize}/${this.currentPage}`)
+          .then(res => {
+            if (res.code === 200) {
+              res.data.rows.forEach(demo => {
+                demo.time = demo.time.substring(0, 10)
+              })
+              this.demos = res.data.rows
+              this.total = res.data.total
+            } else {
+              this.$message.error(res.message)
+            }
+          }).catch(err => {
+        this.$message.error(err)
+      })
+    },
+    goBack() {
+      this.currentPage = 1
+      this.currentChange(this.currentPage)
+      this.pageHide = false
+      this.queryDemoTitle = ''
+    }
   }
 }
 </script>

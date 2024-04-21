@@ -1,18 +1,30 @@
 <template>
   <div>
     <el-container>
-      <el-header>
-        <el-input
-            v-model="queryUsername"
-            size="mini"
-            placeholder="查询用户名"/>
-        <el-button @click="queryUserByName">查询</el-button>
+      <el-page-header @back="goBack" content="人员详情">
+      </el-page-header>
+      <el-header style="display: flex; flex-direction: column; align-items: flex-start; height: 15vh">
         <el-select v-model="choice" placeholder="请选择" @change="identityChange">
           <el-option v-for="item in this.identities" :key="item" :label="item"
                      :value="item">
           </el-option>
         </el-select>
-        <!--<el-button @click="addUser">新增</el-button>-->
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <el-input
+              v-model="queryUsername"
+              size="mini"
+              placeholder="查询用户名"/>
+          <el-button @click="queryUserByName">查询</el-button>
+        </div>
+        <el-upload
+            action="http://localhost:8081/webRawMember/excel/upload"
+            :multiple="false"
+            name="excel"
+            :on-success="handleUploadExcelSuccess"
+            :on-error="handleUploadExcelFail"
+            :headers="{token: this.token}">
+          <el-button size="small">点击上传人员原始数据</el-button>
+        </el-upload>
       </el-header>
 
       <el-main>
@@ -35,6 +47,12 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination v-if="!this.pageHide"
+                       layout="prev, pager, next,total"
+                       :total="total"
+                       :page-size="pageSize"
+                       :current-page="currentPage"
+                       @current-change="currentChange"></el-pagination>
 
         <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
           <el-form :model="form">
@@ -83,21 +101,26 @@ export default {
   name: 'Member',
   data() {
     return {
+      token: sessionStorage.getItem('token'),
       users: [],
       queryUsername: '',
       form: {},
       formVisible: false,
       tableIndex: -1,
       identities: ['教授', '副教授', '讲师', '在校生', '毕业生'],
-      queryUserIdentity: '',
-      choice: ''
+      choice: '',
+      total: 0,
+      pageSize: 10,
+      currentPage: 1,
+      pageHide: false
     }
   },
   created() {
-    this.$request.get('/webMember/all')
+    this.$request.get(`/webMember/all/${this.pageSize}/${this.currentPage}`)
         .then(res => {
           if (res.code === 200) {
-            this.users = res.data
+            this.users = res.data.rows
+            this.total = res.data.total
           } else {
             this.$message.error(res.message)
           }
@@ -112,6 +135,7 @@ export default {
           .then(res => {
             if (res.code === 200) {
               this.users = res.data
+              this.pageHide = true
             } else {
               this.$message.error(res.message)
             }
@@ -120,10 +144,11 @@ export default {
       })
     },
     identityChange() {
-      this.$request.get('/webMember/identity/' + this.choice)
+      this.$request.get(`/webMember/identity/${this.choice}/${this.pageSize}/${this.currentPage}`)
           .then(res => {
             if (res.code === 200) {
-              this.users = res.data
+              this.users = res.data.rows
+              this.total = res.data.total
             } else {
               this.$message.error(res.message)
             }
@@ -148,11 +173,6 @@ export default {
           }).catch(err => {
         this.$message.error(err)
       })
-    },
-    addUser() {
-      this.tableIndex = -1
-      this.form = {}
-      this.formVisible = true
     },
     updateUser() {
       this.formVisible = false
@@ -184,6 +204,33 @@ export default {
           this.$message.error(err)
         })
       }
+    },
+    currentChange(currentPage) {
+      this.currentPage = currentPage
+      this.$request.get(`/webMember/${this.choice === '' ? 'all' : this.choice}/${this.pageSize}/${this.currentPage}`)
+          .then(res => {
+            if (res.code === 200) {
+              this.users = res.data.rows
+              this.total = res.data.total
+            } else {
+              this.$message.error(res.message)
+            }
+          }).catch(err => {
+        this.$message.error(err)
+      })
+    },
+    goBack() {
+      this.currentPage = 1
+      this.choice = ''
+      this.currentChange(this.currentPage)
+      this.pageHide = false
+      this.queryUsername = ''
+    },
+    handleUploadExcelSuccess(response, file, fileList) {
+      this.$message.success('上传原始人员数据成功')
+    },
+    handleUploadExcelFail(err, file, fileList) {
+      this.$message.success('上传原始人员数据失败')
     },
   }
 }
