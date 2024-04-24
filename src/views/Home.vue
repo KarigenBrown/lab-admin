@@ -14,25 +14,35 @@
                 text-color="#fff"
                 active-text-color="#fff">
               <div v-if="this.role === 'admin'">
-                <el-menu-item index="/permit">权限管理</el-menu-item>
-                <el-submenu index="0">
+                <el-menu-item
+                    v-if="this.permits.includes('权限管理') || this.identity !== '在校生'"
+                    index="/permit">
+                  权限管理
+                </el-menu-item>
+                <el-submenu
+                    v-if="this.permitList.some(permit => this.permits.includes(permit))"
+                    index="0">
                   <div slot="title">
                     <span>数据库管理</span>
                   </div>
-                  <el-menu-item v-if="this.permits.includes('成果管理') || this.identity !== '在校生'"
-                                index="/achievement">
+                  <el-menu-item
+                      v-if="this.permits.includes('成果管理') || this.identity !== '在校生'"
+                      index="/achievement">
                     成果管理
                   </el-menu-item>
-                  <el-menu-item v-if="this.permits.includes('人员管理') || this.identity !== '在校生'"
-                                index="/member">
+                  <el-menu-item
+                      v-if="this.permits.includes('人员管理') || this.identity !== '在校生'"
+                      index="/member">
                     人员管理
                   </el-menu-item>
-                  <el-menu-item v-if="this.permits.includes('Demo管理') || this.identity !== '在校生'"
-                                index="/demo">
+                  <el-menu-item
+                      v-if="this.permits.includes('Demo管理') || this.identity !== '在校生'"
+                      index="/demo">
                     Demo管理
                   </el-menu-item>
-                  <el-menu-item v-if="this.permits.includes('活动管理') || this.identity !== '在校生'"
-                                index="/activity">
+                  <el-menu-item
+                      v-if="this.permits.includes('活动管理') || this.identity !== '在校生'"
+                      index="/activity">
                     活动管理
                   </el-menu-item>
                 </el-submenu>
@@ -74,6 +84,7 @@ export default {
     return {
       role: '',
       permits: '',
+      permitList: ['成果管理', '人员管理', 'Demo管理', '活动管理', '权限管理'],
       identity: '',
       number: ''
     }
