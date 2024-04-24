@@ -18,4 +18,11 @@ function testSplit() {
     console.log(JSON.stringify(text))
 }
 
-testSplit()
+function testSome() {
+    let permitList = ['权限管理', '成果管理', '人员管理', 'Demo管理', '活动管理']
+    let permits = ['成果管理']
+    let include = permitList.some(permit => permits.includes(permit))
+    console.log('include: ' + include)
+}
+
+testSome()
