@@ -85,7 +85,6 @@
             <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
             <el-button size="small" type="success" @click="submitUploadPhoto">上传到服务器
             </el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
           <el-upload
               ref="videos"
@@ -257,6 +256,21 @@ export default {
         const newName = this.date + '_' + this.rawName + file.name.substring(
             file.name.lastIndexOf('.')
         )
+
+        if (file.size / 1024 / 1024 > 200) {
+          this.$message.error('文件过大')
+        }
+        if (this.photoName[file.name]) {
+          this.$message.error('原始文件名重复')
+        }
+        const values = Object.values(this.photoName)
+        fileList.filter(file => file.status === 'success').forEach(file => values.push(file.name))
+        for (const value in values) {
+          if (value === newName) {
+            this.$message.error('新文件名重复')
+          }
+        }
+
         this.photoName[file.name] = newName
         file.name = newName
 
