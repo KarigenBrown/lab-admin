@@ -1,49 +1,106 @@
 <template>
   <div>
     <el-form :model="userInfo">
-      <el-form-item label="姓名" prop="name">
-        {{ userInfo.name }}
-        <el-checkbox v-model="userInfoHidden.name">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item label="学工号" prop="number">
-        {{ userInfo.number }}
-        <el-checkbox v-model="userInfoHidden.number">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item label="联系方式" prop="contact">
-        {{ userInfo.contact }}
-        <el-checkbox v-model="userInfoHidden.contact">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item label="身份" prop="identity">
-        {{ userInfo.identity }}
-        <el-checkbox v-model="userInfoHidden.identity">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item v-if="userInfo.identity === '在校生'" label="年级" prop="grade">
-        {{ userInfo.grade }}
-        <el-checkbox v-model="userInfoHidden.grade">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item v-if="userInfo.identity === '毕业生'" label="毕业时间" prop="graduationTime">
-        {{ userInfo.graduationTime }}
-        <el-checkbox v-model="userInfoHidden.graduationTime">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item
-          v-if="userInfo.identity === '毕业生'"
-          label="毕业去向"
-          prop="graduationDestination">
-        {{ userInfo.graduationDestination }}
-        <el-checkbox v-model="userInfoHidden.graduationDestination">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item label="研究方向" prop="research">
-        {{ userInfo.research }}
-        <el-checkbox v-model="userInfoHidden.research">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item label="成就" prop="achievement">
-        {{ userInfo.achievement }}
-        <el-checkbox v-model="userInfoHidden.achievement">隐藏</el-checkbox>
-      </el-form-item>
-      <el-form-item label="简介" prop="introduction">
-        {{ userInfo.introduction }}
-        <el-checkbox v-model="userInfoHidden.introduction">隐藏</el-checkbox>
-      </el-form-item>
+      <el-row>
+        <el-col :span="this.length">
+          <el-form-item label="姓名" prop="name">
+            {{ userInfo.name }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.name">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="this.length">
+          <el-form-item label="学工号" prop="number">
+            {{ userInfo.number }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.number">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="this.length">
+          <el-form-item label="联系方式" prop="contact">
+            {{ userInfo.contact }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.contact">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="this.length">
+          <el-form-item label="身份" prop="identity">
+            {{ userInfo.identity }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.identity">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row v-if="userInfo.identity === '在校生'">
+        <el-col :span="this.length">
+          <el-form-item label="年级" prop="grade">
+            {{ userInfo.grade }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.grade">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row v-if="userInfo.identity === '毕业生'">
+        <el-col :span="this.length">
+          <el-form-item label="毕业时间" prop="graduationTime">
+            {{ userInfo.graduationTime }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.graduationTime">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row v-if="userInfo.identity === '毕业生'">
+        <el-col :span="this.length">
+          <el-form-item label="毕业去向" prop="graduationDestination">
+            {{ userInfo.graduationDestination }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.graduationDestination">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="this.length">
+          <el-form-item label="研究方向" prop="research">
+            {{ userInfo.research }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.research">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="this.length">
+          <el-form-item label="成就" prop="achievement">
+            {{ userInfo.achievement }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.achievement">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="this.length">
+          <el-form-item label="简介" prop="introduction">
+            {{ userInfo.introduction }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24 - this.length">
+          <el-checkbox v-model="userInfoHidden.introduction">隐藏</el-checkbox>
+        </el-col>
+      </el-row>
       <el-button type="success" @click="updateHiddenFields">确定</el-button>
     </el-form>
   </div>
@@ -54,7 +111,8 @@ export default {
   data() {
     return {
       userInfo: {},
-      userInfoHidden: {}
+      userInfoHidden: {},
+      length: 20
     }
   },
   created() {

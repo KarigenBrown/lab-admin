@@ -9,7 +9,7 @@
           <el-main>
             <el-menu
                 router
-                :default-active="$route.path"
+                :default-active="this.defaultIndex"
                 background-color="#314050"
                 text-color="#fff"
                 active-text-color="#fff">
@@ -86,7 +86,8 @@ export default {
       permits: '',
       permitList: ['成果管理', '人员管理', 'Demo管理', '活动管理', '权限管理'],
       identity: '',
-      number: ''
+      number: '',
+      defaultIndex: ''
     }
   },
   created() {
@@ -98,6 +99,7 @@ export default {
     this.identity = sessionStorage.getItem('identity')
     this.permits = sessionStorage.getItem('permits').split(',')
     this.role = sessionStorage.getItem('role')
+    this.defaultIndex = this.role === 'admin' ? '/log' : '/info'
   },
   methods: {
     logout() {

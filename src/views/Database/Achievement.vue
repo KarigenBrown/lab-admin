@@ -38,7 +38,7 @@
             <el-table-column label="论文年份" prop="theyear"></el-table-column>
             <el-table-column v-if="choice === '论文'" label="论文状态" prop="articleStatus">
               <template v-slot="scope">
-                {{ scope.row.articleStatus === 0 ? '草稿' : '已发布' }}
+                {{ ['开题', '草稿', '已发布'][scope.row.articleStatus - 1] }}
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -60,7 +60,7 @@
               <el-form-item
                   v-if="this.tableIndex !== -1"
                   label="id"
-                  prop="id"></el-form-item>
+                  prop="id">{{form.id}}</el-form-item>
               <el-form-item label="标题" prop="title">
                 <el-input v-model="form.title" placeholder="标题"></el-input>
               </el-form-item>
@@ -119,6 +119,15 @@
                 </el-steps>
                 <el-button @click="nextStatus">下一步</el-button>
               </el-form-item>
+              <el-form-item
+                  style="white-space: pre-wrap;"
+                  v-if="form.category === '论文' || form.category === '技术标准'"
+                  label="日志"
+                  prop="log">
+                {{ this.form.log }}
+                <el-input v-model="form.newLog" placeholder="内容"></el-input>
+                <el-button @click="addNewLog">确定</el-button>
+              </el-form-item>
               <el-form-item label="是否隐藏" prop="hidden">
                 <el-radio-group v-model="form.hidden">
                   <el-radio label="1">是</el-radio>
@@ -158,7 +167,7 @@
               <el-form-item
                   v-if="this.tableIndex !== -1"
                   label="id"
-                  prop="id"></el-form-item>
+                  prop="id">{{form.id}}</el-form-item>
               <el-form-item label="项目名称" prop="name">
                 <el-input v-model="form.name" placeholder="项目名称"></el-input>
               </el-form-item>
@@ -179,9 +188,14 @@
                 </el-steps>
                 <el-button @click="nextStatus">下一步</el-button>
               </el-form-item>
+              <el-form-item label="日志" prop="log">
+                {{ this.form.log }}
+                <el-input v-model="form.newLog" placeholder="内容"></el-input>
+                <el-button @click="addNewLog">确定</el-button>
+              </el-form-item>
             </el-form>
-            <el-button @click="formVisible = false">取消</el-button>
-            <el-button @click="updateProject">确定</el-button>
+            <el-button type="warning" @click="formVisible = false">取消</el-button>
+            <el-button type="success" @click="updateProject">确定</el-button>
           </el-dialog>
         </div>
       </el-main>
@@ -189,6 +203,8 @@
   </div>
 </template>
 <script>
+import moment from "moment/moment";
+
 export default {
   name: 'Achievement',
   data() {
@@ -404,9 +420,9 @@ export default {
       this.tableIndex = -1
       this.form = {}
       this.form.category = this.choice
-      this.form.status = 0
-      this.form.articleStatus = 0
-      this.form.techniqueStatus = 0
+      this.form.status = 1
+      this.form.articleStatus = 1
+      this.form.techniqueStatus = 1
       this.formVisible = true
     },
     currentChange(currentPage) {
@@ -444,6 +460,15 @@ export default {
       this.articleType = '标题'
       this.currentChange(this.currentPage)
       this.pageHide = false
+    },
+    addNewLog() {
+      this.form.newLog = `${moment(this.date).format('YYYY-MM-DD hh:mm:ss')}:  ${this.form.newLog}`
+      if (this.form.log) {
+        this.form.log += ('\n' + this.form.newLog)
+      } else {
+        this.form.log = ('\n' + this.form.newLog)
+      }
+      this.form.newLog = ''
     }
   }
 }
