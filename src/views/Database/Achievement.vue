@@ -60,7 +60,8 @@
               <el-form-item
                   v-if="this.tableIndex !== -1"
                   label="id"
-                  prop="id">{{form.id}}</el-form-item>
+                  prop="id">{{ form.id }}
+              </el-form-item>
               <el-form-item label="标题" prop="title">
                 <el-input v-model="form.title" placeholder="标题"></el-input>
               </el-form-item>
@@ -167,7 +168,8 @@
               <el-form-item
                   v-if="this.tableIndex !== -1"
                   label="id"
-                  prop="id">{{form.id}}</el-form-item>
+                  prop="id">{{ form.id }}
+              </el-form-item>
               <el-form-item label="项目名称" prop="name">
                 <el-input v-model="form.name" placeholder="项目名称"></el-input>
               </el-form-item>
@@ -188,7 +190,10 @@
                 </el-steps>
                 <el-button @click="nextStatus">下一步</el-button>
               </el-form-item>
-              <el-form-item label="日志" prop="log">
+              <el-form-item
+                  style="white-space: pre-wrap;"
+                  label="日志"
+                  prop="log">
                 {{ this.form.log }}
                 <el-input v-model="form.newLog" placeholder="内容"></el-input>
                 <el-button @click="addNewLog">确定</el-button>
