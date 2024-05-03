@@ -46,7 +46,7 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="简介" prop="introduction">
-              <el-input v-model="form.introduction" placeholder="简介"></el-input>
+              <el-input type="textarea" autosize v-model="form.introduction" placeholder="简介"></el-input>
             </el-form-item>
             <el-form-item label="内容" prop="content">
               <el-input type="textarea" autosize v-model="form.content" placeholder="内容">
@@ -71,8 +71,10 @@
             <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
             <el-button type="success" @click="submitUpload">上传到服务器</el-button>
           </el-upload>
-          <el-button type="warning" @click="formVisible = false">取消</el-button>
-          <el-button type="success" @click="updateActivity">确定</el-button>
+          <div>
+            <el-button type="warning" @click="formVisible = false">取消</el-button>
+            <el-button type="success" @click="updateActivity">确定</el-button>
+          </div>
         </el-dialog>
       </el-main>
     </el-container>

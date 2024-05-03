@@ -42,7 +42,7 @@
         <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
           <el-form :model="form">
             <el-form-item label="用户名" prop="username">
-              <el-input v-model="form.username" placeholder="用户名"></el-input>
+              {{ form.username}}
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-checkbox v-model="form.password" :true-label="form.username">原始密码</el-checkbox>
@@ -53,8 +53,10 @@
               </el-checkbox-group>
             </el-form-item>
           </el-form>
-          <el-button type="warning" @click="formVisible = false">取消</el-button>
-          <el-button type="success" @click="updateUser">确定</el-button>
+          <div>
+            <el-button type="warning" @click="formVisible = false">取消</el-button>
+            <el-button type="success" @click="updateUser">确定</el-button>
+          </div>
         </el-dialog>
       </el-main>
     </el-container>

@@ -35,7 +35,7 @@
             <el-table-column label="期刊" prop="journal"></el-table-column>
             <el-table-column label="第一作者" prop="author"></el-table-column>
             <el-table-column label="其他作者" prop="authors"></el-table-column>
-            <el-table-column label="论文年份" prop="theyear"></el-table-column>
+            <el-table-column v-if="choice === '论文'" label="论文年份" prop="theyear"></el-table-column>
             <el-table-column v-if="choice === '论文'" label="论文状态" prop="articleStatus">
               <template v-slot="scope">
                 {{ ['开题', '草稿', '已发布'][scope.row.articleStatus - 1] }}
@@ -57,11 +57,6 @@
 
           <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
             <el-form :model="form">
-              <el-form-item
-                  v-if="this.tableIndex !== -1"
-                  label="id"
-                  prop="id">{{ form.id }}
-              </el-form-item>
               <el-form-item label="标题" prop="title">
                 <el-input v-model="form.title" placeholder="标题"></el-input>
               </el-form-item>
@@ -81,14 +76,14 @@
                 <el-input v-model="form.link" placeholder="详情页链接"></el-input>
               </el-form-item>
               <el-form-item label="代码" prop="papercode">
-                <el-input v-model="form.papercode" placeholder="代码"></el-input>
+                <el-input type="textarea" autosize v-model="form.papercode" placeholder="代码"></el-input>
               </el-form-item>
               <el-form-item label="摘要" prop="abstract">
-                <el-input v-model="form.abstract" placeholder="摘要"></el-input>
+                <el-input type="textarea" autosize v-model="form.abstract" placeholder="摘要"></el-input>
               </el-form-item>
               <el-form-item label="类别" prop="category">{{ form.category }}</el-form-item>
-              <el-form-item v-if="form.category === '论文'" label="论文首字母" prop="initials">
-                <el-input v-model="form.initials" placeholder="论文首字母"></el-input>
+              <el-form-item v-if="form.category === '论文'" label="期刊首字母" prop="initials">
+                <el-input v-model="form.initials" placeholder="期刊首字母"></el-input>
               </el-form-item>
               <el-form-item v-if="form.category === '论文'"
                             label="是否为实验室内部论文"
@@ -136,8 +131,10 @@
                 </el-radio-group>
               </el-form-item>
             </el-form>
-            <el-button type="warning" @click="formVisible = false">取消</el-button>
-            <el-button type="success" @click="updateNonProject">确定</el-button>
+            <div>
+              <el-button type="warning" @click="formVisible = false">取消</el-button>
+              <el-button type="success" @click="updateNonProject">确定</el-button>
+            </div>
           </el-dialog>
         </div>
 
@@ -165,11 +162,6 @@
 
           <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
             <el-form :model="form">
-              <el-form-item
-                  v-if="this.tableIndex !== -1"
-                  label="id"
-                  prop="id">{{ form.id }}
-              </el-form-item>
               <el-form-item label="项目名称" prop="name">
                 <el-input v-model="form.name" placeholder="项目名称"></el-input>
               </el-form-item>
@@ -180,7 +172,7 @@
                 <el-input v-model="form.theyear" placeholder="项目年份"></el-input>
               </el-form-item>
               <el-form-item label="内容" prop="content">
-                <el-input v-model="form.content" placeholder="内容"></el-input>
+                <el-input type="textarea" autosize v-model="form.content" placeholder="内容"></el-input>
               </el-form-item>
               <el-form-item label="项目状态" prop="status">
                 <el-steps :active="form.status" finish-status="success">
@@ -199,8 +191,10 @@
                 <el-button @click="addNewLog">确定</el-button>
               </el-form-item>
             </el-form>
-            <el-button type="warning" @click="formVisible = false">取消</el-button>
-            <el-button type="success" @click="updateProject">确定</el-button>
+            <div>
+              <el-button type="warning" @click="formVisible = false">取消</el-button>
+              <el-button type="success" @click="updateProject">确定</el-button>
+            </div>
           </el-dialog>
         </div>
       </el-main>

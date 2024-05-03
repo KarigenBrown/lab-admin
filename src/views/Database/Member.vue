@@ -38,11 +38,7 @@
           <el-table-column label="身份" prop="identity"></el-table-column>
           <el-table-column label="操作">
             <template v-slot="scope">
-              <el-button
-                  v-if="scope.row.identity.endsWith('生')"
-                  @click="editUser(scope.$index, scope.row)">
-                编辑
-              </el-button>
+              <el-button @click="editUser(scope.$index, scope.row)">编辑</el-button>
               <el-button type="danger" @click="deleteUser(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
@@ -57,10 +53,10 @@
         <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
           <el-form :model="form">
             <el-form-item label="学工号" prop="number">
-              <el-input v-model="form.number" placeholder="学号"></el-input>
+              {{ form.number }}
             </el-form-item>
-            <el-form-item label="用户名" prop="username">
-              <el-input v-model="form.name" placeholder="用户名"></el-input>
+            <el-form-item label="用户名" prop="name">
+              {{ form.name }}
             </el-form-item>
             <el-form-item label="身份" prop="identity">
               <el-select v-model="form.identity">
@@ -89,8 +85,10 @@
               </el-form-item>
             </div>
           </el-form>
-          <el-button type="warning" @click="formVisible = false">取消</el-button>
-          <el-button type="success" @click="updateUser">确定</el-button>
+          <div>
+            <el-button type="warning" @click="formVisible = false">取消</el-button>
+            <el-button type="success" @click="updateUser">确定</el-button>
+          </div>
         </el-dialog>
       </el-main>
     </el-container>

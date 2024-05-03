@@ -7,9 +7,9 @@
         stripe
         border>
       <el-table-column label="id" prop="id"></el-table-column>
-      <el-table-column label="userid" prop="userid"></el-table-column>
-      <el-table-column label="createTime" prop="createTime"></el-table-column>
-      <el-table-column label="log" prop="log"></el-table-column>
+      <el-table-column label="用户id" prop="userid"></el-table-column>
+      <el-table-column label="创建时间" prop="createTime"></el-table-column>
+      <el-table-column style="white-space: pre-wrap;" label="日志内容" prop="log"></el-table-column>
     </el-table>
     <el-pagination layout="prev, pager, next,total"
                    :total="total"
