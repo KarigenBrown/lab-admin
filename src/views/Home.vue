@@ -33,7 +33,7 @@
                   <el-menu-item
                       v-if="this.permits.includes('人员管理') || this.identity !== '在校生'"
                       index="/member">
-                    人员管理
+                    成员管理
                   </el-menu-item>
                   <el-menu-item
                       v-if="this.permits.includes('Demo管理') || this.identity !== '在校生'"

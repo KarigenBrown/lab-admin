@@ -29,7 +29,7 @@ const routes = [
                 path: '/member',
                 name: 'Member',
                 meta: {
-                    name: '人员管理'
+                    name: '成员管理'
                 },
                 component: () => import('../views/Database/Member.vue')
             },

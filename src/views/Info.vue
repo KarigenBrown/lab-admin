@@ -30,23 +30,23 @@
 
     <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
       <el-form :model="form">
-        <el-upload
-            ref="photo"
-            action="http://localhost:8081/webMember/photo"
-            list-type="picture"
-            :limit="1"
-            :multiple="false"
-            :auto-upload="false"
-            :file-list="photoList"
-            name="photo"
-            :before-upload="beforeUpload"
-            :on-success="uploadSuccess"
-            :data="this.names"
-            :headers="{token: this.token}">
-          <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-          <el-button size="small" type="success" @click="submitUpload">上传到服务器
-          </el-button>
-        </el-upload>
+          <el-upload
+              ref="photo"
+              action="http://localhost:8081/webMember/photo"
+              list-type="picture"
+              :limit="1"
+              :multiple="false"
+              :auto-upload="false"
+              :file-list="photoList"
+              name="photo"
+              :before-upload="beforeUpload"
+              :on-success="uploadSuccess"
+              :data="this.names"
+              :headers="{token: this.token}">
+            <el-button slot="trigger" size="small" type="primary" style="margin-right: 10px">选取图片</el-button>
+            <el-button size="small" type="success" @click="submitUpload">上传到服务器
+            </el-button>
+          </el-upload>
         <el-form-item label="联系方式" prop="contact">
           <el-input v-model="form.contact">{{ form.contact }}</el-input>
         </el-form-item>
@@ -66,6 +66,7 @@
           </el-input>
         </el-form-item>
       </el-form>
+      <br>
       <div>
         <el-button type="warning" @click="formVisible = false">取消</el-button>
         <el-button type="success" @click="updateUserInfo">确定</el-button>

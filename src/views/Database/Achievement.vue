@@ -121,8 +121,9 @@
                   label="日志"
                   prop="log">
                 {{ this.form.log }}
-                <el-input v-model="form.newLog" placeholder="内容"></el-input>
-                <el-button @click="addNewLog">确定</el-button>
+                <el-input v-model="form.newLog" placeholder="日志内容"></el-input>
+                <br><br>
+                <el-button @click="addNewLog">提交日志</el-button>
               </el-form-item>
               <el-form-item label="是否隐藏" prop="hidden">
                 <el-radio-group v-model="form.hidden">
@@ -131,6 +132,7 @@
                 </el-radio-group>
               </el-form-item>
             </el-form>
+            <br>
             <div>
               <el-button type="warning" @click="formVisible = false">取消</el-button>
               <el-button type="success" @click="updateNonProject">确定</el-button>
@@ -187,10 +189,12 @@
                   label="日志"
                   prop="log">
                 {{ this.form.log }}
-                <el-input v-model="form.newLog" placeholder="内容"></el-input>
-                <el-button @click="addNewLog">确定</el-button>
+                <el-input v-model="form.newLog" placeholder="日志内容"></el-input>
+                <br><br>
+                <el-button @click="addNewLog">提交日志</el-button>
               </el-form-item>
             </el-form>
+            <br>
             <div>
               <el-button type="warning" @click="formVisible = false">取消</el-button>
               <el-button type="success" @click="updateProject">确定</el-button>

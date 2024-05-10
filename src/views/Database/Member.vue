@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-container>
-      <el-page-header @back="goBack" content="人员详情">
+      <el-page-header @back="goBack" content="成员详情">
       </el-page-header>
       <el-header style="display: flex; flex-direction: column; align-items: flex-start; height: 15vh">
         <el-select v-model="choice" placeholder="请选择" @change="identityChange">
@@ -85,6 +85,7 @@
               </el-form-item>
             </div>
           </el-form>
+          <br>
           <div>
             <el-button type="warning" @click="formVisible = false">取消</el-button>
             <el-button type="success" @click="updateUser">确定</el-button>

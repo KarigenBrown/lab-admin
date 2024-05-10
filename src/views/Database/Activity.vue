@@ -53,24 +53,30 @@
               </el-input>
             </el-form-item>
           </el-form>
-          <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
-          <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
-          <el-upload ref="photos"
-                     :action="encodeURI(encodeURI(`http://localhost:8081/webActivity/${this.form.title}/photo/upload`))"
-                     list-type="picture"
-                     :multiple="false"
-                     :auto-upload="false"
-                     :file-list="photoList"
-                     name="photos"
-                     :on-change="handleChangePhoto"
-                     :before-remove="handleRemovePhoto"
-                     :on-success="handleUploadPhotoSuccess"
-                     :on-preview="downloadPhoto"
-                     :data="{'photoName': JSON.stringify(this.photoName)}"
-                     :headers="{token: this.token}">
-            <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-            <el-button type="success" @click="submitUpload">上传到服务器</el-button>
-          </el-upload>
+          <br>
+          <div>
+            <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
+            <br><br>
+            <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
+            <el-upload ref="photos"
+                       :action="encodeURI(encodeURI(`http://localhost:8081/webActivity/${this.form.title}/photo/upload`))"
+                       list-type="picture"
+                       :multiple="false"
+                       :auto-upload="false"
+                       :file-list="photoList"
+                       name="photos"
+                       :on-change="handleChangePhoto"
+                       :before-remove="handleRemovePhoto"
+                       :on-success="handleUploadPhotoSuccess"
+                       :on-preview="downloadPhoto"
+                       :data="{'photoName': JSON.stringify(this.photoName)}"
+                       :headers="{token: this.token}">
+              <br>
+              <el-button slot="trigger" size="small" type="primary" style="margin-right: 10px">选取图片</el-button>
+              <el-button type="success" @click="submitUpload">上传到服务器</el-button>
+            </el-upload>
+          </div>
+          <br>
           <div>
             <el-button type="warning" @click="formVisible = false">取消</el-button>
             <el-button type="success" @click="updateActivity">确定</el-button>
