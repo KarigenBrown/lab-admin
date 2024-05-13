@@ -20,7 +20,7 @@
                   权限管理
                 </el-menu-item>
                 <el-submenu
-                    v-if="this.permitList.some(permit => this.permits.includes(permit))"
+                    v-if="this.permitList.some(permit => this.permits.includes(permit)) || this.identity !== '在校生'"
                     index="0">
                   <div slot="title">
                     <span>数据库管理</span>
@@ -31,7 +31,7 @@
                     成果管理
                   </el-menu-item>
                   <el-menu-item
-                      v-if="this.permits.includes('人员管理') || this.identity !== '在校生'"
+                      v-if="this.permits.includes('成员管理') || this.identity !== '在校生'"
                       index="/member">
                     成员管理
                   </el-menu-item>
@@ -84,7 +84,7 @@ export default {
     return {
       role: '',
       permits: '',
-      permitList: ['成果管理', '人员管理', 'Demo管理', '活动管理', '权限管理'],
+      permitList: ['成果管理', '成员管理', 'Demo管理', '活动管理', '权限管理'],
       identity: '',
       number: '',
       defaultIndex: ''

@@ -23,7 +23,7 @@
             :on-success="handleUploadExcelSuccess"
             :on-error="handleUploadExcelFail"
             :headers="{token: this.token}">
-          <el-button size="small">点击上传人员原始数据</el-button>
+          <el-button size="small">点击上传成员原始数据</el-button>
         </el-upload>
       </el-header>
 
@@ -226,10 +226,10 @@ export default {
       this.queryUsername = ''
     },
     handleUploadExcelSuccess(response, file, fileList) {
-      this.$message.success('上传原始人员数据成功')
+      this.$message.success('上传原始成员数据成功')
     },
     handleUploadExcelFail(err, file, fileList) {
-      this.$message.success('上传原始人员数据失败')
+      this.$message.success('上传原始成员数据失败')
     },
   }
 }
