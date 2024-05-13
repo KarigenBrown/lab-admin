@@ -55,9 +55,9 @@
           </el-form>
           <br>
           <div>
-            <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
-            <br><br>
-            <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
+            <el-date-picker v-model="date" type="date" placeholder="选择日期"
+                            style="margin-bottom: 10px"></el-date-picker>
+            <el-input v-model="rawName" placeholder="请输入图片名称" style="margin-bottom: 10px"></el-input>
             <el-upload ref="photos"
                        :action="encodeURI(encodeURI(`http://localhost:8081/webActivity/${this.form.title}/photo/upload`))"
                        list-type="picture"
@@ -71,7 +71,6 @@
                        :on-preview="downloadPhoto"
                        :data="{'photoName': JSON.stringify(this.photoName)}"
                        :headers="{token: this.token}">
-              <br>
               <el-button slot="trigger" size="small" type="primary" style="margin-right: 10px">选取图片</el-button>
               <el-button type="success" @click="submitUpload">上传到服务器</el-button>
             </el-upload>

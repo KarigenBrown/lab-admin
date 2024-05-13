@@ -62,17 +62,15 @@
               <el-tag closable v-for="tag in form.keywords" :key="tag" @close="handleTagClose(tag)">
                 {{ tag }}
               </el-tag>
-              <el-input v-model="newTag" placeholder="新关键字"></el-input>
-              <br><br>
+              <el-input v-model="newTag" placeholder="新关键字" style="margin-bottom: 10px"></el-input>
               <el-button @click="addNewTag">增加关键字</el-button>
             </el-form-item>
           </el-form>
           <br>
           <div>
-            <el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
-            <br><br>
-            <el-input v-model="rawName" placeholder="请输入图片名称"></el-input>
-            <br><br>
+            <el-date-picker v-model="date" type="date" placeholder="选择日期"
+                            style="margin-bottom: 10px"></el-date-picker>
+            <el-input v-model="rawName" placeholder="请输入图片名称" style="margin-bottom: 10px"></el-input>
             <el-upload
                 ref="photos"
                 :action="encodeURI(encodeURI(`http://localhost:8081/webDemo/${this.form.title}/photo/upload`))"
