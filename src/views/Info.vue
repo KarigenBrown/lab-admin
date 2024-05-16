@@ -2,8 +2,8 @@
   <div>
     <el-row>
       <el-col :span="8">
-        <el-avatar :src="userInfo.photoUrl + '?_=' + new Date()" shape="square" :size="250"
-                   :key="userInfo.photoUrl + '?_=' + new Date()">
+        <el-avatar :src="userInfo.photoUrl + '?_=' + new Date().getTime()" shape="square" :size="250"
+                   :key="userInfo.photoUrl + '?_=' + new Date().getTime()">
         </el-avatar>
       </el-col>
       <el-col :span="16">
@@ -107,6 +107,9 @@ export default {
   methods: {
     editUser() {
       this.form = JSON.parse(JSON.stringify(this.userInfo))
+      if (!this.form.photoUrl) {
+        this.photoList = []
+      }
       this.formVisible = true
     },
     beforeUpload(file) {

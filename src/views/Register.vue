@@ -29,7 +29,7 @@
           <el-form-item>
             <el-button id="register" @click="register">注册</el-button>
           </el-form-item>
-          <el-link href="/login">已经有账号?请登录</el-link>
+          <el-link href="/#/login">已经有账号?请登录</el-link>
         </el-form>
       </el-main>
     </el-container>
