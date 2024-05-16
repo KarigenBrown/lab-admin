@@ -52,8 +52,14 @@ export default {
     return {
       user: {},
       rules: {
+        number: [
+          {required: true, message: '请输入学工号', trigger: 'blur'}
+        ],
         username: [
           {required: true, message: '请输入用户名', trigger: 'blur'}
+        ],
+        identity: [
+          {required: true, message: '请选择身份', trigger: 'blur'}
         ],
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'}
