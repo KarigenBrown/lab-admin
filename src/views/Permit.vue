@@ -19,9 +19,13 @@
           <el-table-column label="id" prop="id"></el-table-column>
           <el-table-column label="学工号" prop="number"></el-table-column>
           <el-table-column label="用户名" prop="username"></el-table-column>
+          <el-table-column label="身份" prop="identity"></el-table-column>
           <el-table-column label="权限" prop="permits">
             <template v-slot="scope">
-              <el-tag v-for="permit in users[scope.$index].permits" :key="permit">
+              <el-tag
+                  v-if="users[scope.$index].identity === '在校生'"
+                  v-for="permit in users[scope.$index].permits"
+                  :key="permit">
                 {{ permit }}
               </el-tag>
             </template>
@@ -48,7 +52,10 @@
             <el-form-item label="密码" prop="password">
               <el-checkbox v-model="form.password" :true-label="form.username">原始密码</el-checkbox>
             </el-form-item>
-            <el-form-item label="权限" prop="permits">
+            <el-form-item
+                v-if="this.form.identity === '在校生'"
+                label="权限"
+                prop="permits">
               <el-checkbox-group v-model="form.permits">
                 <el-checkbox v-for="permit in permitList" :label="permit" :key="permit"/>
               </el-checkbox-group>
