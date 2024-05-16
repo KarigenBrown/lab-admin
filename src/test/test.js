@@ -1,3 +1,5 @@
+const {pinyin} = require('pinyin-pro');
+
 function testList() {
     let urls = '1,2,3'
     const list = urls.split(',').map(value => {
@@ -25,4 +27,18 @@ function testSome() {
     console.log('include: ' + include)
 }
 
-testSome()
+function testInitials(journal) {
+    let initials = journal
+    if (/[\u4e00-\u9fff]/.test(journal)) {
+        initials = pinyin(journal, {toneType: 'none', type: 'array'}).join(' ');
+    }
+
+    initials = initials.split(' ')
+        .map(word => word.charAt(0).toLowerCase())
+        .join('');
+
+    console.log(initials)
+}
+
+testInitials('中文会议')
+testInitials('Security and Communication Networks')
