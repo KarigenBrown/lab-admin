@@ -7,7 +7,8 @@
         <el-input
             v-model="queryUsername"
             size="mini"
-            placeholder="查询用户名"/>
+            placeholder="查询用户名"
+            style="margin-right: 10px"/>
         <el-button @click="query">查询</el-button>
       </el-header>
       <el-main>
@@ -42,7 +43,7 @@
         <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
           <el-form :model="form">
             <el-form-item label="用户名" prop="username">
-              {{ form.username}}
+              {{ form.username }}
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-checkbox v-model="form.password" :true-label="form.username">原始密码</el-checkbox>

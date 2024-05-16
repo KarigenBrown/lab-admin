@@ -12,9 +12,12 @@
           <el-input
               v-model="achievementTitle"
               size="mini"
-              style="width: 300px"
+              style="width: 300px; margin-right: 10px"
               placeholder="查询成就"></el-input>
-          <el-radio-group v-if="this.choice === '论文'" v-model="articleType">
+          <el-radio-group
+              v-if="this.choice === '论文'"
+              v-model="articleType"
+              style="margin-right: 10px">
             <el-radio label="标题">标题</el-radio>
             <el-radio label="年份">年份</el-radio>
             <el-radio label="期刊（首字母）">期刊（首字母）</el-radio>
@@ -61,7 +64,7 @@
                 <el-input v-model="form.title" placeholder="标题"></el-input>
               </el-form-item>
               <el-form-item label="期刊" prop="journal">
-                <el-input v-model="form.journal" placeholder="期刊"></el-input>
+                <el-input v-model="form.journal" placeholder="期刊全称"></el-input>
               </el-form-item>
               <el-form-item v-if="form.category !== '竞赛获奖'" label="第一作者" prop="author">
                 <el-input v-model="form.author" placeholder="第一作者"></el-input>
@@ -69,8 +72,8 @@
               <el-form-item v-if="form.category !== '竞赛获奖'" label="其他作者" prop="authors">
                 <el-input v-model="form.authors" placeholder="其他作者"></el-input>
               </el-form-item>
-              <el-form-item v-if="form.category === '论文'" label="论文年份" prop="theyear">
-                <el-input v-model="form.theyear" placeholder="论文年份"></el-input>
+              <el-form-item v-if="form.category === '论文'" label="论文日期" prop="date">
+                <el-date-picker v-model="form.date" type="date" placeholder="选择日期"></el-date-picker>
               </el-form-item>
               <el-form-item label="详情页链接" prop="link">
                 <el-input v-model="form.link" placeholder="详情页链接"></el-input>
@@ -82,9 +85,6 @@
                 <el-input type="textarea" autosize v-model="form.abstract" placeholder="摘要"></el-input>
               </el-form-item>
               <el-form-item label="类别" prop="category">{{ form.category }}</el-form-item>
-              <el-form-item v-if="form.category === '论文'" label="期刊首字母" prop="initials">
-                <el-input v-model="form.initials" placeholder="期刊首字母"></el-input>
-              </el-form-item>
               <el-form-item v-if="form.category === '论文'"
                             label="是否为实验室内部论文"
                             prop="internal">
@@ -121,8 +121,10 @@
                   label="日志"
                   prop="log">
                 {{ this.form.log }}
-                <el-input v-model="form.newLog" placeholder="日志内容"></el-input>
-                <br><br>
+                <el-input
+                    v-model="form.newLog"
+                    placeholder="日志内容"
+                    style="margin-bottom: 10px"></el-input>
                 <el-button @click="addNewLog">提交日志</el-button>
               </el-form-item>
               <el-form-item label="是否隐藏" prop="hidden">
@@ -207,6 +209,7 @@
 </template>
 <script>
 import moment from "moment/moment";
+import {pinyin} from 'pinyin-pro';
 
 export default {
   name: 'Achievement',
@@ -341,6 +344,21 @@ export default {
       })
     },
     updateNonProject() {
+      if (this.choice !== '项目') {
+        this.form.date = moment(this.form.date).format('YYYY-MM-DD')
+        this.form.theyear = moment(this.form.date).format('YYYY')
+      }
+
+      if (this.choice === '论文') {
+        let initials = this.form.journal
+        if (/[\u4e00-\u9fff]/.test(this.form.journal)) {
+          initials = pinyin(this.form.journal, {toneType: 'none', type: 'array'}).join(' ');
+        }
+        this.form.initials = initials.split(' ')
+            .map(word => word.charAt(0).toLowerCase())
+            .join('');
+      }
+
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webAchievement', this.form)
             .then(res => {
@@ -465,7 +483,7 @@ export default {
       this.pageHide = false
     },
     addNewLog() {
-      this.form.newLog = `${moment(this.date).format('YYYY-MM-DD hh:mm:ss')}:  ${this.form.newLog}`
+      this.form.newLog = `${moment(new Date()).format('YYYY-MM-DD hh:mm:ss')}:  ${this.form.newLog}`
       if (this.form.log) {
         this.form.log += ('\n' + this.form.newLog)
       } else {

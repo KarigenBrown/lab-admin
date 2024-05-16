@@ -13,7 +13,8 @@
           <el-input
               v-model="queryUsername"
               size="mini"
-              placeholder="查询用户名"/>
+              placeholder="查询用户名"
+              style="margin-right: 10px"/>
           <el-button @click="queryUserByName">查询</el-button>
         </div>
         <el-upload
