@@ -73,7 +73,7 @@
             <el-input v-model="rawName" placeholder="请输入图片名称" style="margin-bottom: 10px"></el-input>
             <el-upload
                 ref="photos"
-                :action="encodeURI(encodeURI(`http://localhost:8081/webDemo/${this.form.title}/photo/upload`))"
+                action="http://localhost:8081/webDemo/photo/upload"
                 list-type="picture"
                 :multiple="false"
                 :auto-upload="false"
@@ -82,8 +82,7 @@
                 :on-change="handleChangePhoto"
                 :before-remove="handleRemovePhoto"
                 :on-success="handleUploadPhotoSuccess"
-                :on-preview="downloadPhoto"
-                :data="{'photoName': JSON.stringify(this.photoName)}"
+                :data="{'title': this.form.title, 'photoName': JSON.stringify(this.photoName)}"
                 :headers="{token: this.token}">
               <el-button slot="trigger" size="small" type="primary" style="margin-right: 10px">选取图片</el-button>
               <el-button size="small" type="success" @click="submitUploadPhoto">上传到服务器
@@ -93,14 +92,14 @@
           <br>
           <el-upload
               ref="videos"
-              :action="encodeURI(encodeURI(`http://localhost:8081/webDemo/${this.form.title}/video/upload`))"
+              action="http://localhost:8081/webDemo/video/upload"
               :multiple="false"
               :auto-upload="false"
               :file-list="videoList"
               name="videos"
               :before-remove="handleRemoveVideo"
               :on-success="handleUploadVideoSuccess"
-              :on-preview="downloadVideo"
+              :data="{'title': this.form.title}"
               :headers="{token: this.token}">
             <el-button slot="trigger" size="small" type="primary" style="margin-right: 10px">选取视频</el-button>
             <el-button size="small" type="success" @click="submitUploadVideo">上传到服务器
@@ -199,7 +198,7 @@ export default {
         this.form.photoUrls = this.form.photoUrls.split('\n')
         this.photoList = this.form.photoUrls.map(photoUrl => {
           const fileName = photoUrl.substring(photoUrl.lastIndexOf('/') + 1)
-          return {url: photoUrl, name: fileName}
+          return {url: photoUrl, name: decodeURI(fileName)}
         })
       }
       this.photoName = {}
@@ -211,7 +210,7 @@ export default {
         this.form.videoUrls = this.form.videoUrls.split('\n')
         this.videoList = this.form.videoUrls.map(videoUrl => {
           const fileName = videoUrl.substring(videoUrl.lastIndexOf('/') + 1)
-          return {url: videoUrl, name: fileName}
+          return {url: videoUrl, name: decodeURI(fileName)}
         })
       }
       this.formVisible = true
@@ -233,16 +232,6 @@ export default {
           array.splice(index, 1)
         }
       })
-    },
-    downloadPhoto(file) {
-      let url = `http://localhost:8081/webDemo/${this.form.title}/photo/download/${file.name}`
-      url = encodeURI(encodeURI(url))
-      window.open(file.url)
-    },
-    downloadVideo(file) {
-      let url = `http://localhost:8081/webDemo/${this.form.title}/video/download/${file.name}`
-      url = encodeURI(encodeURI(url))
-      window.open(file.url)
     },
     handleUploadPhotoSuccess(response, file, fileList) {
       if (this.tableIndex !== -1) { // 修改

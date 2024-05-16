@@ -59,7 +59,7 @@
                             style="margin-bottom: 10px"></el-date-picker>
             <el-input v-model="rawName" placeholder="请输入图片名称" style="margin-bottom: 10px"></el-input>
             <el-upload ref="photos"
-                       :action="encodeURI(encodeURI(`http://localhost:8081/webActivity/${this.form.title}/photo/upload`))"
+                       action="http://localhost:8081/webActivity/photo/upload"
                        list-type="picture"
                        :multiple="false"
                        :auto-upload="false"
@@ -68,8 +68,7 @@
                        :on-change="handleChangePhoto"
                        :before-remove="handleRemovePhoto"
                        :on-success="handleUploadPhotoSuccess"
-                       :on-preview="downloadPhoto"
-                       :data="{'photoName': JSON.stringify(this.photoName)}"
+                       :data="{'title': this.form.title, 'photoName': JSON.stringify(this.photoName)}"
                        :headers="{token: this.token}">
               <el-button slot="trigger" size="small" type="primary" style="margin-right: 10px">选取图片</el-button>
               <el-button type="success" @click="submitUpload">上传到服务器</el-button>
@@ -152,11 +151,6 @@ export default {
         this.$message.error(err)
       })
     },
-    downloadPhoto(file) {
-      let url = `http://localhost:8081/webActivity/${this.form.title}/photo/download/${file.name}`
-      url = encodeURI(encodeURI(url))
-      window.open(url)
-    },
     addActivity() {
       this.tableIndex = -1
       this.form = {}
@@ -177,7 +171,7 @@ export default {
         this.form.urls = this.form.urls.split('\n')
         this.photoList = this.form.urls.map(photoUrl => {
           const fileName = photoUrl.substring(photoUrl.lastIndexOf('/') + 1)
-          return {url: photoUrl, name: fileName}
+          return {url: photoUrl, name: decodeURI(fileName)}
         })
       }
       this.photoName = {}
