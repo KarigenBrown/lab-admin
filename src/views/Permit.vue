@@ -50,7 +50,7 @@
               {{ form.username }}
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-checkbox v-model="form.password" :true-label="form.username">原始密码</el-checkbox>
+              <el-checkbox v-model="form.password" :true-label="form.username">恢复默认密码（用户名）</el-checkbox>
             </el-form-item>
             <el-form-item
                 v-if="this.form.identity === '在校生'"
