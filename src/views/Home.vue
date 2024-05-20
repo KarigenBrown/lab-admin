@@ -64,9 +64,33 @@
             <el-breadcrumb-item style="color: white">主页</el-breadcrumb-item>
             <el-breadcrumb-item style="color: white">{{ $route.meta.name }}</el-breadcrumb-item>
           </el-breadcrumb>
-          <el-button id="logout" size="small" type="danger" @click="logout">
-            退出
-          </el-button>
+          <div>
+            <el-button id="changePassword" size="small" type="warning" @click="formVisible = true; form = {}">
+              修改密码
+            </el-button>
+            <el-button id="logout" size="small" type="danger" @click="logout">
+              退出
+            </el-button>
+
+            <div>
+              <el-dialog :visible.sync="formVisible" :close-on-click-modal="false">
+                <el-form :model="form">
+                  <el-form-item label="新密码" prop="newPassword">
+                    <el-input v-model="form.newPassword" placeholder="新密码">
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="确认密码" prop="conformPassword">
+                    <el-input v-model="form.conformPassword" placeholder="确认密码">
+                    </el-input>
+                  </el-form-item>
+                </el-form>
+                <div style="margin-top: 10px">
+                  <el-button type="warning" @click="formVisible = false">取消</el-button>
+                  <el-button type="success" @click="changePassword">确定</el-button>
+                </div>
+              </el-dialog>
+            </div>
+          </div>
         </el-header>
         <!--主体区域-->
         <el-main>
@@ -87,7 +111,9 @@ export default {
       permitList: ['成果管理', '成员管理', 'Demo管理', '活动管理', '权限管理'],
       identity: '',
       number: '',
-      defaultIndex: ''
+      defaultIndex: '',
+      form: {},
+      formVisible: false,
     }
   },
   created() {
@@ -116,6 +142,27 @@ export default {
           }).catch(err => {
         this.$message.error(err)
       })
+    },
+    changePassword() {
+      if (!this.form.newPassword) {
+        this.$message.error('请输入新密码')
+      } else if (!this.form.conformPassword) {
+        this.$message.error('请确认密码')
+      } else if (this.form.newPassword !== this.form.conformPassword) {
+        this.$message.error('两次密码不一致')
+      } else {
+        this.$request.put('/webManager/changePassword?newPassword=' + this.form.newPassword)
+            .then(res => {
+              if (res.code === 200) {
+                this.formVisible = false
+                this.$message.success('修改密码成功')
+              } else {
+                this.$message.error(res.message)
+              }
+            }).catch(err => {
+          this.$message.error(err)
+        })
+      }
     }
   }
 }
@@ -152,10 +199,6 @@ export default {
 .el-breadcrumb {
   font-size: 16px;
   background-color: #4c8dbd;
-}
-
-#logout {
-  padding: 5px 15px;
 }
 
 .el-breadcrumb__inner {
