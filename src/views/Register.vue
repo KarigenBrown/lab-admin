@@ -1,5 +1,5 @@
 <template>
-  <div id="root">
+  <div id="root" style="background-color: #0f9876;">
     <el-container id="form">
       <el-header>欢迎注册后台管理系统</el-header>
       <el-main>
@@ -97,7 +97,6 @@ export default {
 #root {
   display: flex;
   font-family: Arial, sans-serif;
-  background-color: #0f9876;
   height: 100vh;
 }
 
