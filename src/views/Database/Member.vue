@@ -97,6 +97,8 @@
   </div>
 </template>
 <script>
+import moment from "moment";
+
 export default {
   name: 'Member',
   data() {
@@ -175,6 +177,10 @@ export default {
       })
     },
     updateUser() {
+      if (this.form.graduationTime) {
+        this.form.graduationTime = moment(this.form.graduationTime).format('YYYY-MM-DD') + ' 00:00:00'
+      }
+
       this.formVisible = false
       if (this.tableIndex === -1) { // 增加
         this.$request.post('/webMember', this.form)
