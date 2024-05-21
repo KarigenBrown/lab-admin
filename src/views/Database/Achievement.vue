@@ -66,10 +66,10 @@
               <el-form-item label="期刊" prop="journal">
                 <el-input v-model="form.journal" placeholder="期刊全称"></el-input>
               </el-form-item>
-              <el-form-item v-if="form.category !== '竞赛获奖'" label="第一作者" prop="author">
+              <el-form-item label="第一作者" prop="author">
                 <el-input v-model="form.author" placeholder="第一作者"></el-input>
               </el-form-item>
-              <el-form-item v-if="form.category !== '竞赛获奖'" label="其他作者" prop="authors">
+              <el-form-item label="其他作者" prop="authors">
                 <el-input v-model="form.authors" placeholder="其他作者"></el-input>
               </el-form-item>
               <el-form-item v-if="form.category === '论文'" label="论文日期" prop="date">
