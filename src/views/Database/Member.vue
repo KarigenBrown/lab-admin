@@ -4,7 +4,7 @@
       <el-page-header @back="goBack" content="成员详情">
       </el-page-header>
       <el-header style="display: flex; flex-direction: column; align-items: flex-start; height: 15vh">
-        <el-select v-model="choice" placeholder="请选择" @change="identityChange">
+        <el-select v-model="choice" placeholder="请选择身份" @change="identityChange">
           <el-option v-for="item in this.identities" :key="item" :label="item"
                      :value="item">
           </el-option>
