@@ -327,6 +327,7 @@ export default {
     },
     editNonProject(index, row) {
       this.form = JSON.parse(JSON.stringify(row))
+      this.form.date = this.form.date + ' 00:00:00'
       this.tableIndex = index
       this.formVisible = true
     },
